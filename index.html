@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="theme-color" content="#020617">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Training V10">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suivi Training V10 Stable</title>
@@ -567,10 +571,11 @@ onclick="document.getElementById('file').click()">Importer</button>
     onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
   import {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc
+   getFirestore,
+doc,
+getDoc,
+setDoc,
+onSnapshot
   } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -660,27 +665,33 @@ onclick="document.getElementById('file').click()">Importer</button>
     });
   }
 
-  onAuthStateChanged(auth, async (user)=>{
+ let unsubscribeCloud = null;
+
+onAuthStateChanged(auth, async (user)=>{
   const el = document.getElementById("authStatus");
 
   if (!user){
+    if (unsubscribeCloud) unsubscribeCloud();
     if (el) el.innerHTML = "Non connecté.";
-    renderAll();
     return;
   }
 
   if (el) el.innerHTML = "Connecté : " + user.email;
 
-  const data = await loadCloudData();
+  const ref = doc(db, "users", user.uid, "app", "main");
 
-  if (data){
+  unsubscribeCloud = onSnapshot(ref, (snap)=>{
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+
     localStorage.setItem("v90_data", JSON.stringify(data.sessions || []));
     localStorage.setItem("v90_athlete", JSON.stringify(data.athlete || {}));
     localStorage.setItem("v90_hrv_daily", JSON.stringify(data.hrvDaily || []));
     localStorage.setItem("v90_race", JSON.stringify(data.race || null));
 
     renderAll();
-  }
+  });
 });
 
   document.getElementById("cloudImportFile")?.addEventListener("change", async function(e){
