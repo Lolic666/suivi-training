@@ -962,13 +962,27 @@ function renderHistory(){
         .join("<br>");
     }
 
-    return `
-      <div class="history-item">
-        <strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>
-        ${details}
-        ${s.notes ? `<div class="phrase">${s.notes}</div>` : ""}
-      </div>
-    `;
+   let phrase = "";
+
+if (s.type === "Vélo"){
+  if ((s.w || 0) < 140) phrase = "🟢 Récupération";
+  else if ((s.w || 0) < 175) phrase = "🔵 Endurance";
+  else if ((s.w || 0) < 205) phrase = "🟡 Tempo";
+  else if ((s.w || 0) <= 240) phrase = "🟠 Seuil";
+  else phrase = "🔴 Intensité";
+}
+
+return `
+  <div class="history-item">
+    <strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>
+
+    ${details}
+
+    ${phrase ? `<div class="phrase"><strong>${phrase}</strong></div>` : ""}
+
+    ${s.notes ? `<div class="phrase">${s.notes}</div>` : ""}
+  </div>
+`;
   }).join("");
 
   if(data.length > 4){
