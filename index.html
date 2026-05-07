@@ -1064,7 +1064,79 @@ function renderRecovery(){ const s=computeRecoveryScore(); document.getElementBy
 function renderFatigueDetails(){ document.getElementById("fatigueBox").innerHTML="Calcul basé sur les dernières séances."; }
 function renderRacePrediction(){ document.getElementById("raceBox").innerHTML=computeRecoveryScore()>70?"🟢 Bonne forme":"🟡 À surveiller"; }
 function renderInjuryRisk(){ document.getElementById("injuryRiskBox").innerHTML=computeRecoveryScore()<45?"🟠 Allège pour éviter la surcharge":"🟢 Pas d’alerte majeure"; }
-function renderBikeCoach(){ const box=document.getElementById("bikeCoachBox"); const data=load().map(normalizeSession).filter(s=>s.type==="Vélo"&&s.w); if(!data.length){box.innerHTML="Pas assez de données vélo."; return;} box.innerHTML="Répartition vélo mise à jour avec tes données."; }
+function renderBikeCoach(){
+  const box = document.getElementById("bikeCoachBox");
+  const data = load().map(normalizeSession).filter(Boolean);
+
+  const today = new Date();
+  today.setHours(23,59,59,999);
+
+  const start = new Date(today);
+  start.setDate(start.getDate() - 6);
+  start.setHours(0,0,0,0);
+
+  const bike = data.filter(s => {
+    const d = new Date(s.date + "T12:00:00");
+    return s.type === "Vélo" && d >= start && d <= today && s.w && s.d;
+  });
+
+  const zones = {
+    recup: 0,
+    endurance: 0,
+    tempo: 0,
+    seuil: 0,
+    intensite: 0
+  };
+
+  bike.forEach(s => {
+    const w = Number(s.w || 0);
+    const duration = Number(s.d || 0);
+
+    if (w < 140) zones.recup += duration;
+    else if (w < 175) zones.endurance += duration;
+    else if (w < 205) zones.tempo += duration;
+    else if (w <= 240) zones.seuil += duration;
+    else zones.intensite += duration;
+  });
+
+  const total = Object.values(zones).reduce((a,b)=>a+b,0);
+
+  const pct = key => total ? Math.round((zones[key] / total) * 100) : 0;
+
+  document.getElementById("z1Pct").textContent = pct("recup") + "%";
+  document.getElementById("z2Pct").textContent = pct("endurance") + "%";
+  document.getElementById("z3Pct").textContent = pct("tempo") + "%";
+  document.getElementById("z4Pct").textContent = pct("seuil") + "%";
+  document.getElementById("z5Pct").textContent = pct("intensite") + "%";
+
+  if (!bike.length){
+    box.innerHTML = "Pas assez de données vélo sur les 7 derniers jours.";
+    return;
+  }
+
+  let message = "";
+  const pEndurance = pct("endurance");
+  const pTempo = pct("tempo");
+  const pSeuil = pct("seuil");
+  const pIntensite = pct("intensite");
+
+  if (pIntensite > 20 || pSeuil > 35){
+    message = "🔴 Beaucoup d’intensité cette semaine. Pense à placer de la récupération.";
+  } else if (pEndurance >= 50 && pIntensite <= 15){
+    message = "🟢 Très bonne base endurance. Répartition propre pour construire le fond.";
+  } else if (pTempo + pSeuil >= 50){
+    message = "🟡 Semaine assez soutenue. Garde une séance facile pour absorber.";
+  } else {
+    message = "🔵 Répartition vélo équilibrée. Continue à rester régulier.";
+  }
+
+  box.innerHTML = `
+    <strong>${message}</strong><br>
+    <span class="small">
+      Calcul sur ${bike.length} séance(s) vélo des 7 derniers jours.
+    </span>
+  `;
+}
 function renderAll(){ hydrateAthlete(); renderSummary(); renderForme(); renderPerformance(); renderRecovery(); renderInjuryRisk(); renderFatigueDetails(); renderRacePrediction(); renderHRV(); renderTodayRecommendation(); renderRacePlan(); renderWeeklyPlan(); renderBikeCoach(); renderCharts(); renderDailyHRVHistory(); renderHistory(); }
 function exportData(){ const payload={sessions:load(), athlete:loadAthlete(), hrvDaily:loadDailyHRV(), race:loadRace()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="v10_clean_backup.json"; a.click(); URL.revokeObjectURL(a.href); }
 function clearData(){ if(confirm("Supprimer toutes les données locales ?")){ localStorage.removeItem(KEY); localStorage.removeItem(HRV_KEY); localStorage.removeItem(RACE_KEY); renderAll(); } }
