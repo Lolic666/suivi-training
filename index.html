@@ -895,6 +895,11 @@ function renderHRV(){
 }
 function renderHistory(){
   alert("NOUVELLE VERSION HISTORIQUE");
+  alert(
+  "analyseVelo = " + typeof analyseVelo + "\n" +
+  "buildTag = " + typeof buildTag + "\n" +
+  "getSessionLoad = " + typeof getSessionLoad
+);
   const el = document.getElementById("history");
   const btn = document.getElementById("historyToggleBtn");
   const athlete = loadAthlete();
