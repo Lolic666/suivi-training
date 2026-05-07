@@ -893,6 +893,42 @@ function renderHRV(){
   let cls="stat forme-mid", status="🟡 Readiness normale"; if(h.deltaPct>=5){cls="stat forme-good"; status="🟢 Readiness haute";} if(h.deltaPct<-5){cls="stat forme-high"; status="🔴 Readiness basse";}
   box.className=cls; box.innerHTML=`<strong>${status}</strong><br>HRV du jour : ${Number(h.last.hrv).toFixed(1)} ms<br>Base récente : ${h.baseline.toFixed(1)} ms<br>Écart : ${h.deltaPct>=0?"+":""}${h.deltaPct.toFixed(1)}%`;
 }
+ function buildTag(label, cls){
+  return `<span class="tag ${cls}">${label}</span>`;
+}
+  function analyseVelo(s){
+  const w = s.w || 0;
+
+  if (w < 140) return {
+    label: "Récupération",
+    phrase: "Séance très légère.",
+    tagClass: "tag-recup"
+  };
+
+  if (w < 175) return {
+    label: "Endurance",
+    phrase: "Travail aérobie.",
+    tagClass: "tag-endurance"
+  };
+
+  if (w < 205) return {
+    label: "Tempo",
+    phrase: "Effort soutenu.",
+    tagClass: "tag-tempo"
+  };
+
+  if (w <= 240) return {
+    label: "Seuil",
+    phrase: "Travail proche seuil.",
+    tagClass: "tag-seuil"
+  };
+
+  return {
+    label: "Intensité",
+    phrase: "Travail VO2.",
+    tagClass: "tag-intensite"
+  };
+}
 function renderHistory(){
   alert("NOUVELLE VERSION HISTORIQUE");
   alert(
