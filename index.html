@@ -1066,76 +1066,64 @@ function renderRacePrediction(){ document.getElementById("raceBox").innerHTML=co
 function renderInjuryRisk(){ document.getElementById("injuryRiskBox").innerHTML=computeRecoveryScore()<45?"🟠 Allège pour éviter la surcharge":"🟢 Pas d’alerte majeure"; }
 function renderBikeCoach(){
   const box = document.getElementById("bikeCoachBox");
+  if (!box) return;
+
   const data = load().map(normalizeSession).filter(Boolean);
+  const bike = data.filter(function(s){
+    return s.type === "Vélo" && Number(s.w || 0) > 0 && Number(s.d || 0) > 0;
+  }).slice(-7);
 
-  const today = new Date();
-  today.setHours(23,59,59,999);
+  let z1 = 0, z2 = 0, z3 = 0, z4 = 0, z5 = 0;
 
-  const start = new Date(today);
-  start.setDate(start.getDate() - 6);
-  start.setHours(0,0,0,0);
-
-  const bike = data.filter(s => {
-    const d = new Date(s.date + "T12:00:00");
-    return s.type === "Vélo" && d >= start && d <= today && s.w && s.d;
-  });
-
-  const zones = {
-    recup: 0,
-    endurance: 0,
-    tempo: 0,
-    seuil: 0,
-    intensite: 0
-  };
-
-  bike.forEach(s => {
+  bike.forEach(function(s){
     const w = Number(s.w || 0);
-    const duration = Number(s.d || 0);
+    const d = Number(s.d || 0);
 
-    if (w < 140) zones.recup += duration;
-    else if (w < 175) zones.endurance += duration;
-    else if (w < 205) zones.tempo += duration;
-    else if (w <= 240) zones.seuil += duration;
-    else zones.intensite += duration;
+    if (w < 140) z1 += d;
+    else if (w < 175) z2 += d;
+    else if (w < 205) z3 += d;
+    else if (w <= 240) z4 += d;
+    else z5 += d;
   });
 
-  const total = Object.values(zones).reduce((a,b)=>a+b,0);
+  const total = z1 + z2 + z3 + z4 + z5;
 
-  const pct = key => total ? Math.round((zones[key] / total) * 100) : 0;
+  function pct(v){
+    return total ? Math.round((v / total) * 100) : 0;
+  }
 
-  document.getElementById("z1Pct").textContent = pct("recup") + "%";
-  document.getElementById("z2Pct").textContent = pct("endurance") + "%";
-  document.getElementById("z3Pct").textContent = pct("tempo") + "%";
-  document.getElementById("z4Pct").textContent = pct("seuil") + "%";
-  document.getElementById("z5Pct").textContent = pct("intensite") + "%";
+  const p1 = pct(z1);
+  const p2 = pct(z2);
+  const p3 = pct(z3);
+  const p4 = pct(z4);
+  const p5 = pct(z5);
+
+  const ids = ["z1Pct","z2Pct","z3Pct","z4Pct","z5Pct"];
+  const vals = [p1,p2,p3,p4,p5];
+
+  ids.forEach(function(id, i){
+    const el = document.getElementById(id);
+    if (el) el.textContent = vals[i] + "%";
+  });
 
   if (!bike.length){
-    box.innerHTML = "Pas assez de données vélo sur les 7 derniers jours.";
+    box.innerHTML = "Pas assez de données vélo.";
     return;
   }
 
-  let message = "";
-  const pEndurance = pct("endurance");
-  const pTempo = pct("tempo");
-  const pSeuil = pct("seuil");
-  const pIntensite = pct("intensite");
+  let msg = "🔵 Répartition vélo équilibrée.";
 
-  if (pIntensite > 20 || pSeuil > 35){
-    message = "🔴 Beaucoup d’intensité cette semaine. Pense à placer de la récupération.";
-  } else if (pEndurance >= 50 && pIntensite <= 15){
-    message = "🟢 Très bonne base endurance. Répartition propre pour construire le fond.";
-  } else if (pTempo + pSeuil >= 50){
-    message = "🟡 Semaine assez soutenue. Garde une séance facile pour absorber.";
-  } else {
-    message = "🔵 Répartition vélo équilibrée. Continue à rester régulier.";
+  if (p5 > 20 || p4 > 35){
+    msg = "🔴 Beaucoup d’intensité cette semaine. Récupération à prévoir.";
+  } else if (p2 >= 50 && p5 <= 15){
+    msg = "🟢 Très bonne base endurance.";
+  } else if ((p3 + p4) >= 50){
+    msg = "🟡 Semaine soutenue. Garde une séance facile.";
   }
 
-  box.innerHTML = `
-    <strong>${message}</strong><br>
-    <span class="small">
-      Calcul sur ${bike.length} séance(s) vélo des 7 derniers jours.
-    </span>
-  `;
+  box.innerHTML =
+    "<strong>" + msg + "</strong><br>" +
+    "<span class='small'>Calcul sur les " + bike.length + " dernières séances vélo.</span>";
 }
 function renderAll(){ hydrateAthlete(); renderSummary(); renderForme(); renderPerformance(); renderRecovery(); renderInjuryRisk(); renderFatigueDetails(); renderRacePrediction(); renderHRV(); renderTodayRecommendation(); renderRacePlan(); renderWeeklyPlan(); renderBikeCoach(); renderCharts(); renderDailyHRVHistory(); renderHistory(); }
 function exportData(){ const payload={sessions:load(), athlete:loadAthlete(), hrvDaily:loadDailyHRV(), race:loadRace()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="v10_clean_backup.json"; a.click(); URL.revokeObjectURL(a.href); }
