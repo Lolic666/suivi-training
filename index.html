@@ -962,28 +962,55 @@ function renderHistory(){
         .join("<br>");
     }
 
-   let phrase = "";
+    let phrase = "";
 
-if (s.type === "Vélo"){
-  if ((s.w || 0) < 140) phrase = "🟢 Récupération";
-  else if ((s.w || 0) < 175) phrase = "🔵 Endurance";
-  else if ((s.w || 0) < 205) phrase = "🟡 Tempo";
-  else if ((s.w || 0) <= 240) phrase = "🟠 Seuil";
-  else phrase = "🔴 Intensité";
-}
+    if (s.type === "Vélo"){
+      if ((s.w || 0) < 140) phrase = "🟢 Récupération — Séance très légère.";
+      else if ((s.w || 0) < 175) phrase = "🔵 Endurance — Travail aérobie.";
+      else if ((s.w || 0) < 205) phrase = "🟡 Tempo — Effort soutenu.";
+      else if ((s.w || 0) <= 240) phrase = "🟠 Seuil — Travail proche seuil.";
+      else phrase = "🔴 Intensité — Travail VO2.";
+    }
 
-return `
-  <div class="history-item">
-    <strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>
+    if (s.type === "Course"){
+      if ((s.bpm || 0) < 135) phrase = "🟢 Récupération — Footing très facile.";
+      else if ((s.bpm || 0) < 155) phrase = "🔵 Endurance — Bonne base aérobie.";
+      else if ((s.bpm || 0) < 170) phrase = "🟡 Tempo — Allure soutenue.";
+      else phrase = "🔴 Intensité — Séance exigeante.";
+    }
 
-    ${details}
+    if (s.type === "Marche"){
+      if ((s.bpm || 0) < 110) phrase = "🟢 Récupération — Marche douce.";
+      else if ((s.bpm || 0) < 130) phrase = "🔵 Endurance — Marche active.";
+      else phrase = "🟡 Cardio — Marche rapide.";
+    }
 
-    ${phrase ? `<div class="phrase"><strong>${phrase}</strong></div>` : ""}
+    if (s.type === "Rameur" || s.type === "Ski Erg"){
+      if ((s.w || 0) < 140) phrase = "🟢 Récupération — Travail léger.";
+      else if ((s.w || 0) < 180) phrase = "🔵 Endurance — Travail aérobie.";
+      else if ((s.w || 0) < 220) phrase = "🟡 Puissance — Séance soutenue.";
+      else phrase = "🔴 Intensité — Gros effort.";
+    }
 
-    ${s.notes ? `<div class="phrase">${s.notes}</div>` : ""}
-  </div>
-`;
+    if (s.type === "Judo"){
+      if ((s.rpe || 3) >= 4) phrase = "🔴 Intensité — Séance exigeante nerveusement.";
+      else phrase = "🥋 Technique — Travail contrôlé.";
+    }
 
+    if (s.type === "Musculation"){
+      phrase = "🏋️ Renforcement — Travail musculaire.";
+    }
+
+    return `
+      <div class="history-item">
+        <strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>
+        ${details}
+        <div class="phrase">Charge : ${Math.round(getSessionLoad(s))}</div>
+        ${phrase ? `<div class="phrase"><strong>${phrase}</strong></div>` : ""}
+        ${s.notes ? `<div class="phrase">${s.notes}</div>` : ""}
+      </div>
+    `;
+  }).join("");
 
   if(data.length > 4){
     btn.classList.remove("hidden");
