@@ -894,15 +894,68 @@ function renderHRV(){
   box.className=cls; box.innerHTML=`<strong>${status}</strong><br>HRV du jour : ${Number(h.last.hrv).toFixed(1)} ms<br>Base récente : ${h.baseline.toFixed(1)} ms<br>Écart : ${h.deltaPct>=0?"+":""}${h.deltaPct.toFixed(1)}%`;
 }
 function renderHistory(){
-  const el=document.getElementById("history"), btn=document.getElementById("historyToggleBtn"); const data=load().map(normalizeSession).filter(Boolean).sort((a,b)=>new Date(b.date)-new Date(a.date));
-  if(!data.length){el.innerHTML='<div class="stat">Aucun historique pour le moment.</div>'; btn.classList.add("hidden"); return;}
-  const visible=isHistoryExpanded?data:data.slice(0,4);
-  el.innerHTML=visible.map(s=>{
-    let details=`${s.d?"Durée : "+formatDurationHours(s.d)+"<br>":""}${s.dist?"Distance : "+s.dist+"<br>":""}${s.w?"Watts : "+s.w+"W<br>":""}${s.bpm?"BPM : "+s.bpm+"<br>":""}${s.allure?"Allure : "+s.allure+"/km<br>":""}`;
-    if(s.type==="Musculation") details=(s.exercices||[]).map(e=>`• ${e.nom} (${e.groupe||""}) ${e.series}x${e.reps}x${e.poids}`).join("<br>");
-    return `<div class="history-item"><strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>${details}${s.notes?`<div class="phrase">${s.notes}</div>`:""}</div>`;
+  const el = document.getElementById("history");
+  const btn = document.getElementById("historyToggleBtn");
+  const athlete = loadAthlete();
+
+  const data = load()
+    .map(normalizeSession)
+    .filter(Boolean)
+    .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  if(!data.length){
+    el.innerHTML = '<div class="stat">Aucun historique pour le moment.</div>';
+    btn.classList.add("hidden");
+    return;
+  }
+
+  const visible = isHistoryExpanded ? data : data.slice(0,4);
+
+  el.innerHTML = visible.map(s=>{
+    let analyse = { label:"Séance", phrase:"Séance enregistrée.", tagClass:"tag-power" };
+
+    if (s.type === "Vélo") analyse = analyseVelo(s);
+    if (s.type === "Course") analyse = analyseCourse(s, athlete);
+    if (s.type === "Rameur" || s.type === "Ski Erg") analyse = analyseErg(s, athlete);
+    if (s.type === "Natation") analyse = analyseSwim(s);
+    if (s.type === "Judo") analyse = analyseJudo(s);
+    if (s.type === "Marche") analyse = analyseMarche(s, athlete);
+    if (s.type === "Musculation") analyse = analyseMuscu();
+
+    let details = `
+      ${s.d ? "Durée : " + formatDurationHours(s.d) + "<br>" : ""}
+      ${s.dist ? "Distance : " + s.dist + "<br>" : ""}
+      ${s.w ? "Watts : " + s.w + "W<br>" : ""}
+      ${s.bpm ? "BPM : " + s.bpm + "<br>" : ""}
+      ${s.allure ? "Allure : " + s.allure + "/km<br>" : ""}
+      ${s.v ? "Vitesse : " + Number(s.v).toFixed(2) + " km/h<br>" : ""}
+      ${s.swolf ? "SWOLF : " + s.swolf + "<br>" : ""}
+    `;
+
+    if(s.type === "Musculation"){
+      details = (s.exercices || [])
+        .map(e => `• ${e.nom} (${e.groupe || ""}) ${e.series}x${e.reps}x${e.poids}`)
+        .join("<br>");
+    }
+
+    return `
+      <div class="history-item">
+        <strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>
+        ${details}
+        <div class="phrase">Charge : ${Math.round(getSessionLoad(s))}</div>
+        ${buildTag(analyse.label, analyse.tagClass)}
+        <div class="phrase"><strong>${analyse.label}</strong> — ${analyse.phrase}</div>
+        ${s.notes ? `<div class="phrase">${s.notes}</div>` : ""}
+      </div>
+    `;
   }).join("");
-  if(data.length>4){ btn.classList.remove("hidden"); btn.textContent=isHistoryExpanded?"Réduire":"Voir plus";} else btn.classList.add("hidden");
+
+  if(data.length > 4){
+    btn.classList.remove("hidden");
+    btn.textContent = isHistoryExpanded ? "Réduire" : "Voir plus";
+  } else {
+    btn.classList.add("hidden");
+  }
 }
 function drawBarChart(canvasId, labels, values, suffix=""){
   const canvas=document.getElementById(canvasId); if(!canvas) return; const ctx=canvas.getContext("2d"), w=canvas.width, h=canvas.height; ctx.clearRect(0,0,w,h);
