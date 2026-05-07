@@ -930,12 +930,7 @@ function renderHRV(){
   };
 }
 function renderHistory(){
-  alert("NOUVELLE VERSION HISTORIQUE");
-  alert(
-  "analyseVelo = " + typeof analyseVelo + "\n" +
-  "buildTag = " + typeof buildTag + "\n" +
-  "getSessionLoad = " + typeof getSessionLoad
-);
+  
   const el = document.getElementById("history");
   const btn = document.getElementById("historyToggleBtn");
   const athlete = loadAthlete();
@@ -963,6 +958,15 @@ function renderHistory(){
     if (s.type === "Judo") analyse = analyseJudo(s);
     if (s.type === "Marche") analyse = analyseMarche(s, athlete);
     if (s.type === "Musculation") analyse = analyseMuscu();
+
+    let analyse = { label:"Séance", phrase:"Séance enregistrée.", tagClass:"tag-power" };
+
+if (s.type === "Vélo") analyse = analyseVelo(s);
+if (s.type === "Musculation") analyse = {
+  label:"Musculation",
+  phrase:"Travail de renforcement.",
+  tagClass:"tag-muscu"
+};
 
     let details = `
       ${s.d ? "Durée : " + formatDurationHours(s.d) + "<br>" : ""}
