@@ -894,6 +894,7 @@ function renderHRV(){
   box.className=cls; box.innerHTML=`<strong>${status}</strong><br>HRV du jour : ${Number(h.last.hrv).toFixed(1)} ms<br>Base récente : ${h.baseline.toFixed(1)} ms<br>Écart : ${h.deltaPct>=0?"+":""}${h.deltaPct.toFixed(1)}%`;
 }
 function renderHistory(){
+  alert("NOUVELLE VERSION HISTORIQUE");
   const el = document.getElementById("history");
   const btn = document.getElementById("historyToggleBtn");
   const athlete = loadAthlete();
