@@ -486,7 +486,10 @@ onclick="document.getElementById('file').click()">Importer</button>
       <div id="hrvBox" class="stat">Pas assez de données HRV.</div>
     </div>
   </div>
-
+   <div class="card" style="margin-top:14px;">
+  <h2>Suivi du poids</h2>
+  <div id="weightBox" class="stat">Pas encore de suivi du poids.</div>
+</div>
   <div class="dashboard-section grid-2">
     <div class="card">
       <h2>État de forme</h2>
@@ -712,6 +715,7 @@ onAuthStateChanged(auth, async (user)=>{
 const KEY = "v90_data";
 const ATHLETE_KEY = "v90_athlete";
 const HRV_KEY = "v90_hrv_daily";
+const WEIGHT_KEY = "v90_weight_history";
 const RACE_KEY = "v90_race";
 const LEGACY_KEYS = ["v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"];
 const LEGACY_ATHLETE_KEYS = ["v891_athlete","v89_athlete","v88_athlete","v87_athlete","v86_athlete","v85_athlete","v84_athlete","v82_athlete","v81_athlete","v8_athlete"];
@@ -801,9 +805,36 @@ function hydrateAthlete(){
   const a=loadAthlete();
   [["athleteNom","nom"],["vo2","vo2"],["ftp","ftp"],["pma","pma"],["rowPma","rowPma"],["fcmax","fcmax"],["poids","poids"],["mg","mg"]].forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.value=a[k]||""; });
 }
+ function loadWeightHistory(){
+  const d = safeJson(WEIGHT_KEY, "[]");
+  return Array.isArray(d) ? d : [];
+}
+
+function saveWeightHistory(data){
+  localStorage.setItem(WEIGHT_KEY, JSON.stringify(data));
+  window.pushLocalToCloud?.();
+}
+
+function updateWeightHistoryFromAthlete(a){
+  if (!a.poids) return;
+
+  const today = new Date().toISOString().slice(0,10);
+  const data = loadWeightHistory();
+
+  const idx = data.findIndex(x => x.date === today);
+
+  if (idx >= 0) {
+    data[idx] = { date: today, poids: Number(a.poids) };
+  } else {
+    data.push({ date: today, poids: Number(a.poids) });
+  }
+
+  data.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  saveWeightHistory(data);
+} 
 function saveAthlete(){
   const a={nom:athleteNom.value||"", vo2:+vo2.value||0, ftp:+ftp.value||0, pma:+pma.value||0, rowPma:+rowPma.value||0, fcmax:+fcmax.value||0, poids:+poids.value||0, mg:+mg.value||0, athleteFactor:0.75};
-  saveAthleteData(a); renderAll(); alert("Athlète enregistré");
+  saveAthleteData(a);updateWeightHistoryFromAthlete(a); renderAll(); alert("Athlète enregistré");
 }
 
 function addExo(data=null){
@@ -1152,7 +1183,42 @@ function renderBikeCoach(){
     "<strong>" + msg + "</strong><br>" +
     "<span class='small'>Calcul sur les " + bike.length + " dernières séances vélo.</span>";
 }
-function renderAll(){ hydrateAthlete(); renderSummary(); renderForme(); renderPerformance(); renderRecovery(); renderInjuryRisk(); renderFatigueDetails(); renderRacePrediction(); renderHRV(); renderTodayRecommendation(); renderRacePlan(); renderWeeklyPlan(); renderBikeCoach(); renderCharts(); renderDailyHRVHistory(); renderHistory(); }
+function renderWeight(){
+  const box = document.getElementById("weightBox");
+  if (!box) return;
+
+  const data = loadWeightHistory().slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+  if (!data.length){
+    box.innerHTML = "Pas encore de suivi du poids.";
+    return;
+  }
+
+  const last = data[0];
+  const previous = data[1];
+
+  let trend = "";
+  if (previous){
+    const diff = Number(last.poids) - Number(previous.poids);
+    if (diff > 0) trend = `↗ +${diff.toFixed(1)} kg depuis la dernière mesure`;
+    else if (diff < 0) trend = `↘ ${diff.toFixed(1)} kg depuis la dernière mesure`;
+    else trend = "→ Stable depuis la dernière mesure";
+  }
+
+  box.innerHTML = `
+    <strong>${Number(last.poids).toFixed(1)} kg</strong><br>
+    Dernière mesure : ${formatDateFR(last.date)}<br>
+    ${trend ? `<span class="small">${trend}</span><br>` : ""}
+    <br>
+    ${data.slice(0,5).map(x => `
+      <div class="history-item">
+        <strong>${formatDateFR(x.date)}</strong><br>
+        Poids : ${Number(x.poids).toFixed(1)} kg
+      </div>
+    `).join("")}
+  `;
+}
+function renderAll(){ hydrateAthlete(); renderSummary(); renderForme(); renderPerformance(); renderRecovery(); renderInjuryRisk(); renderFatigueDetails(); renderRacePrediction(); renderHRV();renderWeight(); renderTodayRecommendation(); renderRacePlan(); renderWeeklyPlan(); renderBikeCoach(); renderCharts(); renderDailyHRVHistory(); renderHistory(); }
 function exportData(){ const payload={sessions:load(), athlete:loadAthlete(), hrvDaily:loadDailyHRV(), race:loadRace()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="v10_clean_backup.json"; a.click(); URL.revokeObjectURL(a.href); }
 function clearData(){ if(confirm("Supprimer toutes les données locales ?")){ localStorage.removeItem(KEY); localStorage.removeItem(HRV_KEY); localStorage.removeItem(RACE_KEY); renderAll(); } }
 document.getElementById("file")?.addEventListener("change", function(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(){ try{ const p=JSON.parse(r.result); const sessions=Array.isArray(p)?p:(p.sessions||p.data||p.seances||[]); if(!confirm("Remplacer les données actuelles ?")) return; saveData(sessions.map(normalizeSession).filter(Boolean)); if(p.athlete) saveAthleteData(p.athlete); if(Array.isArray(p.hrvDaily)) saveDailyHRVData(p.hrvDaily); if(p.race) saveRaceData(p.race); alert("Import réussi"); renderAll(); }catch(err){alert("Erreur import JSON");} e.target.value=""; }; r.readAsText(f); });
