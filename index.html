@@ -73,6 +73,18 @@ function deleteTodayHRV(){const d=hrvDate.value; saveDailyHRVData(loadDailyHRV()
 function saveRace(){saveRaceData({date:raceDate.value||"",type:raceType.value||"Triathlon",priority:racePriority.value||"A"}); renderAll()} function deleteRace(){if(confirm("Supprimer la compétition ?")){localStorage.removeItem(RACE_KEY); window.pushLocalToCloud?.(); renderAll()}} function getRacePhase(days){if(days<=3)return"peak"; if(days<=7)return"taper"; if(days<=21)return"specific"; return"build"}
 function computePerformanceModel(){const daily={}; load().map(normalizeSession).filter(Boolean).forEach(s=>{daily[s.date]=(daily[s.date]||0)+getSessionLoad(s)}); let ctl=0,atl=0; Object.keys(daily).sort().forEach(d=>{ctl+=(daily[d]-ctl)/42; atl+=(daily[d]-atl)/7}); return {ctl,atl,form:ctl-atl}}
 function getHRVState(){const h=loadDailyHRV().slice().sort((a,b)=>new Date(a.date)-new Date(b.date)); if(h.length<3)return null; const last=h[h.length-1],base=h.slice(-8,-1).map(x=>+x.hrv).filter(Boolean),baseline=base.reduce((a,b)=>a+b,0)/(base.length||1); return {last,baseline,deltaPct:baseline?((last.hrv-baseline)/baseline)*100:0}}
+function durationToMinutes(v){
+  if(!v || !v.includes(":")) return 0;
+
+  const parts = v.split(":").map(Number);
+
+  if(parts.length === 3){
+    const [h,m,s] = parts;
+    return (h*60) + m + (s/60);
+  }
+
+  return 0;
+}
 function computeRecoveryScore(){let score=50; const p=computePerformanceModel(),h=getHRVState(); if(p.form>5)score+=10; if(p.form<-15)score-=15; if(h){if(h.deltaPct>5)score+=15; if(h.deltaPct<-5)score-=20} return Math.max(0,Math.min(100,Math.round(score)))}
 function renderSummary(){const a=loadAthlete(),data=load().map(normalizeSession).filter(Boolean); resumeNom.textContent=a.nom||"-"; resumeCount.textContent=data.length; const sorted=data.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)),last=sorted.at(-1); resumeLast.textContent=last?`${formatDateFR(last.date)} · ${last.type}`:"-"; const today=new Date(); today.setHours(23,59,59,999); const start=new Date(today); start.setDate(start.getDate()-6); start.setHours(0,0,0,0); resumeLoad7.textContent=Math.round(data.filter(s=>{const d=new Date(s.date+"T12:00:00"); return d>=start&&d<=today}).reduce((sum,s)=>sum+getSessionLoad(s),0))}
 function renderDailyHRVHistory(){const el=document.getElementById("hrvDailyHistory"),btn=document.getElementById("hrvToggleBtn"); if(!el||!btn)return; const data=loadDailyHRV().slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,7); if(!data.length){el.innerHTML='<div class="stat">Aucune HRV quotidienne enregistrée.</div>'; btn.classList.add("hidden"); return} const visible=isHRVExpanded?data:data.slice(0,2); el.innerHTML=visible.map(h=>`<div class="history-item"><strong>${formatDateFR(h.date)}</strong><br>HRV : ${Number(h.hrv||h.value||0).toFixed(1)} ms</div>`).join(""); if(data.length>2){btn.classList.remove("hidden"); btn.textContent=isHRVExpanded?"Réduire":"Voir plus"} else btn.classList.add("hidden")}
