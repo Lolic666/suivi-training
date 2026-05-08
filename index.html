@@ -484,6 +484,10 @@ onclick="document.getElementById('file').click()">Importer</button>
     <div class="card">
       <h2>HRV & readiness</h2>
       <div id="hrvBox" class="stat">Pas assez de données HRV.</div>
+   <div class="chart-wrap" style="margin-top:14px;">
+  <div class="small">Suivi du poids</div>
+  <canvas id="chartWeight" width="520" height="220"></canvas>
+</div>
     </div>
   </div>
    <div class="card" style="margin-top:14px;">
@@ -881,7 +885,88 @@ function saveSession(){
 if (typeof pushLocalToCloud === "function") {
   pushLocalToCloud();
 }
+function renderWeightChart(){
+  const canvas = document.getElementById("chartWeight");
+  if (!canvas) return;
 
+  const data = loadWeightHistory()
+    .slice()
+    .sort((a,b)=>new Date(a.date)-new Date(b.date))
+    .slice(-14);
+
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  if (!data.length){
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "14px Arial";
+    ctx.fillText("Pas encore de données poids.", 20, 40);
+    return;
+  }
+
+  const values = data.map(x => Number(x.poids));
+  const min = Math.min(...values) - 1;
+  const max = Math.max(...values) + 1;
+
+  const padLeft = 42;
+  const padRight = 14;
+  const padTop = 20;
+  const padBottom = 32;
+
+  const chartW = w - padLeft - padRight;
+  const chartH = h - padTop - padBottom;
+
+  ctx.strokeStyle = "#475569";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(padLeft, padTop);
+  ctx.lineTo(padLeft, h - padBottom);
+  ctx.lineTo(w - padRight, h - padBottom);
+  ctx.stroke();
+
+  function xPos(i){
+    return padLeft + (i / Math.max(data.length - 1, 1)) * chartW;
+  }
+
+  function yPos(v){
+    return padTop + ((max - v) / Math.max(max - min, 1)) * chartH;
+  }
+
+  ctx.strokeStyle = "#38bdf8";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+
+  data.forEach((item, i)=>{
+    const x = xPos(i);
+    const y = yPos(Number(item.poids));
+
+    if (i === 0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+
+  ctx.stroke();
+
+  data.forEach((item, i)=>{
+    const x = xPos(i);
+    const y = yPos(Number(item.poids));
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.beginPath();
+    ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = "10px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(Number(item.poids).toFixed(1), x, y - 8);
+
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText(shortDateFR(item.date), x, h - 10);
+  });
+}
 renderAll();
 }
 
@@ -1218,7 +1303,7 @@ function renderWeight(){
     `).join("")}
   `;
 }
-function renderAll(){ hydrateAthlete(); renderSummary(); renderForme(); renderPerformance(); renderRecovery(); renderInjuryRisk(); renderFatigueDetails(); renderRacePrediction(); renderHRV();renderWeight(); renderTodayRecommendation(); renderRacePlan(); renderWeeklyPlan(); renderBikeCoach(); renderCharts(); renderDailyHRVHistory(); renderHistory(); }
+function renderAll(){ hydrateAthlete(); renderSummary(); renderForme(); renderPerformance(); renderRecovery(); renderInjuryRisk(); renderFatigueDetails(); renderRacePrediction(); renderHRV();renderWeight();renderWeightChart(); renderTodayRecommendation(); renderRacePlan(); renderWeeklyPlan(); renderBikeCoach(); renderCharts(); renderDailyHRVHistory(); renderHistory(); }
 function exportData(){ const payload={sessions:load(), athlete:loadAthlete(), hrvDaily:loadDailyHRV(), race:loadRace()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="v10_clean_backup.json"; a.click(); URL.revokeObjectURL(a.href); }
 function clearData(){ if(confirm("Supprimer toutes les données locales ?")){ localStorage.removeItem(KEY); localStorage.removeItem(HRV_KEY); localStorage.removeItem(RACE_KEY); renderAll(); } }
 document.getElementById("file")?.addEventListener("change", function(e){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=function(){ try{ const p=JSON.parse(r.result); const sessions=Array.isArray(p)?p:(p.sessions||p.data||p.seances||[]); if(!confirm("Remplacer les données actuelles ?")) return; saveData(sessions.map(normalizeSession).filter(Boolean)); if(p.athlete) saveAthleteData(p.athlete); if(Array.isArray(p.hrvDaily)) saveDailyHRVData(p.hrvDaily); if(p.race) saveRaceData(p.race); alert("Import réussi"); renderAll(); }catch(err){alert("Erreur import JSON");} e.target.value=""; }; r.readAsText(f); });
