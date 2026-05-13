@@ -111,36 +111,79 @@ function renderHRV(){const box=document.getElementById("hrvBox"),h=getHRVState()
 function buildTag(label,cls){return `<span class="tag ${cls}">${label}</span>`}
 
 function editSession(id){
-  const data=load();
-  const index=data.findIndex(s=>String(s.id)===String(id));
-  if(index===-1){alert("Séance introuvable.");return}
-  const s=normalizeSession(data[index]);
-  const newDate=prompt("Date (YYYY-MM-DD)",s.date);
-  if(newDate!==null&&newDate.trim())s.date=newDate.trim();
-  const newDuration=prompt("Durée HH:MM:SS",formatDurationHours(s.d));
-  if(newDuration!==null&&newDuration.trim())s.d=durationToMinutes(newDuration.trim());
-  if(s.type!=="Musculation"){
-    if(!s.type.startsWith("Judo")){
-      const newDist=prompt("Distance",s.dist||0);
-      if(newDist!==null)s.dist=Number(newDist)||0;
-    }
-    const newWatts=prompt("Watts",s.w||0);
-    if(newWatts!==null)s.w=Number(newWatts)||0;
-    const newBpm=prompt("BPM",s.bpm||0);
-    if(newBpm!==null)s.bpm=Number(newBpm)||0;
-    if(s.type==="Course"||s.type==="Marche"){
-      const newAllure=prompt("Allure min/km",s.allure||"");
-      if(newAllure!==null){s.allure=newAllure.trim();s.v=paceToKmh(s.allure)}
-    }
-    const newRpe=prompt("RPE 1-5",s.rpe||3);
-    if(newRpe!==null)s.rpe=Number(newRpe)||3;
+  const data = load();
+  const index = data.findIndex(s=>String(s.id) === String(id));
+
+  if(index === -1){
+    alert("Séance introuvable.");
+    return;
   }
-  const newNotes=prompt("Notes",s.notes||"");
-  if(newNotes!==null)s.notes=newNotes;
-  data[index]=s;
+
+  const original = data[index];
+  const s = normalizeSession(original);
+
+  const newDate = prompt("Date (YYYY-MM-DD)", s.date);
+  if(newDate !== null && newDate.trim()) s.date = newDate.trim();
+
+  const newDuration = prompt("Durée HH:MM:SS", formatDurationHours(s.d));
+  if(newDuration !== null && newDuration.trim()){
+    s.d = durationToMinutes(newDuration.trim());
+  }
+
+  if(s.type !== "Musculation"){
+    if(!s.type.startsWith("Judo")){
+      const newDist = prompt("Distance", s.dist || 0);
+      if(newDist !== null) s.dist = Number(newDist) || 0;
+    } else {
+      s.dist = 0;
+    }
+
+    const newWatts = prompt("Watts", s.w || 0);
+    if(newWatts !== null) s.w = Number(newWatts) || 0;
+
+    const newBpm = prompt("BPM", s.bpm || 0);
+    if(newBpm !== null) s.bpm = Number(newBpm) || 0;
+
+    if(s.type === "Course" || s.type === "Marche"){
+      const newAllure = prompt("Allure min/km", s.allure || "");
+      if(newAllure !== null){
+        s.allure = newAllure.trim();
+        s.v = paceToKmh(s.allure);
+      }
+    }
+
+    const newRpe = prompt("RPE 1-5", s.rpe || 3);
+    if(newRpe !== null) s.rpe = Number(newRpe) || 3;
+  }
+
+  const newNotes = prompt("Notes", s.notes || "");
+  if(newNotes !== null) s.notes = newNotes;
+
+  data[index] = {
+    id: original.id || s.id,
+    date: s.date,
+    type: s.type,
+    d: Number(s.d) || 0,
+    dist: Number(s.dist) || 0,
+    w: Number(s.w) || 0,
+    r: Number(s.r) || 0,
+    bpm: Number(s.bpm) || 0,
+    allure: s.allure || "",
+    v: Number(s.v) || 0,
+    swolf: Number(s.swolf) || 0,
+    rpe: Number(s.rpe) || 3,
+    notes: s.notes || "",
+    exercices: s.exercices || []
+  };
+
   saveData(data);
   renderAll();
-  alert("Séance modifiée 👍");
+
+  alert(
+    "Séance modifiée 👍\n" +
+    "Durée enregistrée : " + formatDurationHours(data[index].d) + "\n" +
+    "Charge recalculée : " + Math.round(getSessionLoad(data[index]))
+  );
 }
 function deleteSession(id){
   if(!confirm("Supprimer cette séance ?"))return;
