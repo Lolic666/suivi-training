@@ -44,7 +44,7 @@ async function loadCloudToApp(){const data=await loadCloudData(); if(!data){aler
 async function pushLocalToCloud(){return await saveCloudData({sessions:JSON.parse(localStorage.getItem("v90_data")||"[]"),athlete:JSON.parse(localStorage.getItem("v90_athlete")||"{}"),hrvDaily:JSON.parse(localStorage.getItem("v90_hrv_daily")||"[]"),race:JSON.parse(localStorage.getItem("v90_race")||"null"),weightHistory:JSON.parse(localStorage.getItem("v90_weight_history")||"[]")});}
 let unsubscribeCloud=null; onAuthStateChanged(auth,async(user)=>{const el=document.getElementById("authStatus"); if(!user){if(unsubscribeCloud) unsubscribeCloud(); unsubscribeCloud=null; if(el) el.innerHTML="Non connecté."; return} if(el) el.innerHTML="Connecté : "+user.email; const ref=doc(db,"users",user.uid,"app","main"); unsubscribeCloud=onSnapshot(ref,(snap)=>{if(!snap.exists()) return; const data=snap.data(); localStorage.setItem("v90_data",JSON.stringify(data.sessions||[])); localStorage.setItem("v90_athlete",JSON.stringify(data.athlete||{})); localStorage.setItem("v90_hrv_daily",JSON.stringify(data.hrvDaily||[])); localStorage.setItem("v90_race",JSON.stringify(data.race||null)); localStorage.setItem("v90_weight_history",JSON.stringify(data.weightHistory||[])); window.renderAll?.();});});
 document.getElementById("cloudImportFile")?.addEventListener("change",async function(e){const file=e.target.files[0]; if(!file) return; try{await importBackupToCloud(file)}catch(err){alert("Erreur import cloud : "+err.message)} e.target.value="";});
-window.signUp=signUp; window.signIn=signIn; window.logout=logout; window.loadCloudToApp=loadCloudToApp; window.pushLocalToCloud=pushLocalToCloud;
+window.signUp=signUp; window.signIn=signIn; window.logout=logout; window.loadCloudToApp=loadCloudToApp; window.pushLocalToCloud=pushLocalToCloud;window.editSession = editSession;
 </script>
 <script>
 const APP_VERSION="ELITE"; document.getElementById("appVersion").textContent=APP_VERSION;
@@ -109,6 +109,54 @@ function renderSummary(){const a=loadAthlete(),data=load().map(normalizeSession)
 function renderDailyHRVHistory(){const el=document.getElementById("hrvDailyHistory"),btn=document.getElementById("hrvToggleBtn"); if(!el||!btn)return; const data=loadDailyHRV().slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,7); if(!data.length){el.innerHTML='<div class="stat">Aucune HRV quotidienne enregistrée.</div>'; btn.classList.add("hidden"); return} const visible=isHRVExpanded?data:data.slice(0,2); el.innerHTML=visible.map(h=>`<div class="history-item"><strong>${formatDateFR(h.date)}</strong><br>HRV : ${Number(h.hrv||h.value||0).toFixed(1)} ms</div>`).join(""); if(data.length>2){btn.classList.remove("hidden"); btn.textContent=isHRVExpanded?"Réduire":"Voir plus"} else btn.classList.add("hidden")}
 function renderHRV(){const box=document.getElementById("hrvBox"),h=getHRVState(); if(!h){box.className="stat"; box.innerHTML="Pas assez de données HRV."; return} let cls="stat forme-mid",status="🟡 Readiness normale"; if(h.deltaPct>=5){cls="stat forme-good";status="🟢 Readiness haute"} if(h.deltaPct<-5){cls="stat forme-high";status="🔴 Readiness basse"} box.className=cls; box.innerHTML=`<strong>${status}</strong><br>HRV du jour : ${Number(h.last.hrv).toFixed(1)} ms<br>Base récente : ${h.baseline.toFixed(1)} ms<br>Écart : ${h.deltaPct>=0?"+":""}${h.deltaPct.toFixed(1)}%`}
 function buildTag(label,cls){return `<span class="tag ${cls}">${label}</span>`}
+function editSession(id){
+  const data = load();
+  const index = data.findIndex(s => String(s.id) === String(id));
+
+  if(index === -1){
+    alert("Séance introuvable.");
+    return;
+  }
+
+  const s = normalizeSession(data[index]);
+
+  const newDate = prompt("Date (YYYY-MM-DD)", s.date);
+  if(newDate !== null && newDate.trim()) s.date = newDate.trim();
+
+  const newDuration = prompt("Durée HH:MM:SS", formatDurationHours(s.d));
+  if(newDuration !== null && newDuration.trim()){
+    s.d = durationToMinutes(newDuration.trim());
+  }
+
+  if(s.type !== "Musculation"){
+    const newDist = prompt("Distance", s.dist || 0);
+    if(newDist !== null) s.dist = Number(newDist) || 0;
+
+    const newWatts = prompt("Watts", s.w || 0);
+    if(newWatts !== null) s.w = Number(newWatts) || 0;
+
+    const newBpm = prompt("BPM", s.bpm || 0);
+    if(newBpm !== null) s.bpm = Number(newBpm) || 0;
+
+    const newAllure = prompt("Allure min/km", s.allure || "");
+    if(newAllure !== null){
+      s.allure = newAllure.trim();
+      s.v = paceToKmh(s.allure);
+    }
+
+    const newRpe = prompt("RPE 1-5", s.rpe || 3);
+    if(newRpe !== null) s.rpe = Number(newRpe) || 3;
+  }
+
+  const newNotes = prompt("Notes", s.notes || "");
+  if(newNotes !== null) s.notes = newNotes;
+
+  data[index] = s;
+  saveData(data);
+  renderAll();
+
+  alert("Séance modifiée 👍");
+}
 function renderHistory(){const el=document.getElementById("history"),btn=document.getElementById("historyToggleBtn"),data=load().map(normalizeSession).filter(Boolean).sort((a,b)=>new Date(b.date)-new Date(a.date)); if(!data.length){el.innerHTML='<div class="stat">Aucun historique pour le moment.</div>'; btn.classList.add("hidden"); return} const visible=isHistoryExpanded?data:data.slice(0,4); el.innerHTML=visible.map(s=>{let details=`${s.d?"Durée : "+formatDurationHours(s.d)+"<br>":""}${s.dist?"Distance : "+s.dist+"<br>":""}${s.w?"Watts : "+s.w+"W<br>":""}${s.bpm?"BPM : "+s.bpm+"<br>":""}${s.allure?"Allure : "+s.allure+"/km<br>":""}${s.v?"Vitesse : "+Number(s.v).toFixed(2)+" km/h<br>":""}${s.swolf?"SWOLF : "+s.swolf+"<br>":""}`; if(s.type==="Musculation")details=(s.exercices||[]).map(e=>`• ${e.nom} (${e.groupe||""}) ${e.series}x${e.reps}x${e.poids}`).join("<br>"); let phrase="",tag=""; if(s.type==="Vélo"){if((s.w||0)<140){phrase="Séance très légère.";tag=buildTag("Récupération","tag-recup")}else if((s.w||0)<175){phrase="Travail aérobie.";tag=buildTag("Endurance","tag-endurance")}else if((s.w||0)<205){phrase="Effort soutenu.";tag=buildTag("Tempo","tag-tempo")}else if((s.w||0)<=240){phrase="Travail proche seuil.";tag=buildTag("Seuil","tag-seuil")}else{phrase="Travail VO2.";tag=buildTag("Intensité","tag-intensite")}} if(s.type==="Course"){if((s.bpm||0)<135){phrase="Footing très facile.";tag=buildTag("Récupération","tag-recup")}else if((s.bpm||0)<155){phrase="Bonne base aérobie.";tag=buildTag("Endurance","tag-endurance")}else if((s.bpm||0)<170){phrase="Allure soutenue.";tag=buildTag("Tempo","tag-tempo")}else{phrase="Séance exigeante.";tag=buildTag("Intensité","tag-intensite")}} if(s.type==="Marche"){if((s.bpm||0)<110){phrase="Marche douce.";tag=buildTag("Récupération","tag-recup")}else if((s.bpm||0)<130){phrase="Marche active.";tag=buildTag("Endurance","tag-endurance")}else{phrase="Marche rapide.";tag=buildTag("Cardio","tag-cardio")}} if(s.type==="Rameur"||s.type==="Ski Erg"){if((s.w||0)<140){phrase="Travail léger.";tag=buildTag("Récupération","tag-recup")}else if((s.w||0)<180){phrase="Travail aérobie.";tag=buildTag("Endurance","tag-endurance")}else if((s.w||0)<220){phrase="Séance soutenue.";tag=buildTag("Puissance","tag-power")}else{phrase="Gros effort.";tag=buildTag("Intensité","tag-intensite")}} if(s.type==="Judo"){if((s.rpe||3)>=4){phrase="Séance exigeante nerveusement.";tag=buildTag("Intensité","tag-judo")}else{phrase="Travail contrôlé.";tag=buildTag("Technique","tag-judo")}} if(s.type==="Musculation"){phrase="Travail musculaire.";tag=buildTag("Renforcement","tag-muscu")} return `<div class="history-item"><strong>${formatDateFR(s.date)}</strong> · ${s.type}<br>${details}<div class="phrase">Charge : ${Math.round(getSessionLoad(s))}</div>${tag}${phrase?`<div class="phrase"><strong>${phrase}</strong></div>`:""}${s.notes?`<div class="phrase">${s.notes}</div>`:""}</div>`}).join(""); if(data.length>4){btn.classList.remove("hidden");btn.textContent=isHistoryExpanded?"Réduire":"Voir plus"}else btn.classList.add("hidden")}
 function drawBarChart(canvasId,labels,values,suffix=""){const canvas=document.getElementById(canvasId); if(!canvas)return; const ctx=canvas.getContext("2d"),w=canvas.width,h=canvas.height; ctx.clearRect(0,0,w,h); const pad=34,max=Math.max(...values,1),step=(w-pad*2)/Math.max(values.length,1),bw=Math.max(8,step-8); ctx.strokeStyle="#475569"; ctx.beginPath(); ctx.moveTo(pad,10);ctx.lineTo(pad,h-pad);ctx.lineTo(w-10,h-pad);ctx.stroke(); values.forEach((v,i)=>{const bh=(v/max)*(h-pad-25),x=pad+i*step+4,y=h-pad-bh; ctx.fillStyle="#38bdf8";ctx.fillRect(x,y,bw,bh);ctx.font="10px Arial";ctx.textAlign="center";ctx.fillStyle="#e2e8f0";if(v)ctx.fillText(Math.round(v)+suffix,x+bw/2,y-4);ctx.fillStyle="#94a3b8";ctx.fillText(labels[i]||"",x+bw/2,h-10)})}
 function renderCharts(){const data=load().map(normalizeSession).filter(Boolean),days=[],today=new Date(); today.setHours(12,0,0,0); for(let i=13;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);days.push(d.toISOString().slice(0,10))} drawBarChart("chartLoad",days.map(shortDateFR),days.map(d=>Math.round(data.filter(s=>s.date===d).reduce((sum,s)=>sum+getSessionLoad(s),0)))); const bike=data.filter(s=>s.type==="Vélo"&&s.w).slice(-8); drawBarChart("chartBike",bike.map(s=>shortDateFR(s.date)),bike.map(s=>s.w),"W"); const run=data.filter(s=>["Course","Marche"].includes(s.type)&&s.v).slice(-8); drawBarChart("chartRun",run.map(s=>shortDateFR(s.date)),run.map(s=>s.v)); const erg=data.filter(s=>["Rameur","Ski Erg"].includes(s.type)&&s.w).slice(-8); drawBarChart("chartErg",erg.map(s=>shortDateFR(s.date)),erg.map(s=>s.w),"W")}
