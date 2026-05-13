@@ -104,20 +104,93 @@ function setupForm(){
     if(t==="Natation")document.getElementById("swolf").classList.remove("hidden");
   }
 }
-function saveSession(){const data=load(),sport=document.getElementById("sport").value; if(!sport)return alert("Choisis un sport."); if(sport==="Musculation"){const list=[...document.querySelectorAll(".exercise")].map(row=>{const series=+row.querySelector(".exo-series").value||0,reps=+row.querySelector(".exo-reps").value||0,poids=+row.querySelector(".exo-poids").value||0; return {nom:row.querySelector(".exo-nom").value.trim(),groupe:row.querySelector(".exo-groupe").value,series,reps,poids,volume:series*reps*poids}}).filter(x=>x.nom&&x.groupe&&x.series>0&&x.reps>0); if(!list.length)return alert("Ajoute au moins un exercice valide."); data.push({id:Date.now(),date:date.value,type:"Musculation",exercices:list,notes:notes.value||""})} else {const al=["Course","Marche"].includes(sport)?allure.value.trim():"",type=sport.startsWith("Judo")?"Judo":sport; data.push({id:Date.now(),date:date.value,type,d:durationToMinutes(duree.value),dist:+distance.value||0,w:+watts.value||0,r:+rpm.value||0,bpm:+bpm.value||0,allure:al,v:["Course","Marche"].includes(sport)?paceToKmh(al):(+vitesse.value||0),swolf:+swolf.value||0,rpe:+rpe.value||3,notes:notes.value||""})}if(editingSessionId !== null){
-  const index = data.findIndex(s => String(s.id) === String(editingSessionId));
+function saveSession(){
+  const data = load();
+  const sport = document.getElementById("sport").value;
 
-  if(index !== -1){
-    data[index] = data[data.length - 1];
-    data[index].id = editingSessionId;
-    data.pop();
+  if(!sport) return alert("Choisis un sport.");
+
+  let session = null;
+
+  if(sport === "Musculation"){
+    const list = [...document.querySelectorAll(".exercise")]
+      .map(row=>{
+        const series = +row.querySelector(".exo-series").value || 0;
+        const reps = +row.querySelector(".exo-reps").value || 0;
+        const poids = +row.querySelector(".exo-poids").value || 0;
+
+        return {
+          nom: row.querySelector(".exo-nom").value.trim(),
+          groupe: row.querySelector(".exo-groupe").value,
+          series,
+          reps,
+          poids,
+          volume: series * reps * poids
+        };
+      })
+      .filter(x=>x.nom && x.groupe && x.series > 0 && x.reps > 0);
+
+    if(!list.length) return alert("Ajoute au moins un exercice valide.");
+
+    session = {
+      id: editingSessionId || Date.now(),
+      date: date.value,
+      type:"Musculation",
+      exercices:list,
+      notes:notes.value || ""
+    };
+
+  } else {
+    const al = ["Course","Marche"].includes(sport) ? allure.value.trim() : "";
+    const type = sport.startsWith("Judo") ? "Judo" : sport;
+
+    session = {
+      id: editingSessionId || Date.now(),
+      date: date.value,
+      type,
+      d:durationToMinutes(duree.value),
+      dist:type === "Judo" ? 0 : (+distance.value || 0),
+      w:+watts.value || 0,
+      r:+rpm.value || 0,
+      bpm:+bpm.value || 0,
+      allure:al,
+      v:["Course","Marche"].includes(sport) ? paceToKmh(al) : (+vitesse.value || 0),
+      swolf:+swolf.value || 0,
+      rpe:+rpe.value || 3,
+      notes:notes.value || ""
+    };
   }
 
-  editingSessionId = null;
+  if(editingSessionId !== null){
+    const index = data.findIndex(s => String(s.id) === String(editingSessionId));
 
-  const btn = document.getElementById("saveSessionBtn");
-  if(btn) btn.textContent = "Ajouter";
-} saveData(data); renderAll()}
+    if(index !== -1){
+      data[index] = session;
+      alert(
+        "Séance mise à jour 👍\n" +
+        "Durée : " + formatDurationHours(session.d || 0) + "\n" +
+        "Charge : " + Math.round(getSessionLoad(session))
+      );
+    } else {
+      alert("Séance à modifier introuvable.");
+      return;
+    }
+
+    editingSessionId = null;
+
+    const btn = document.getElementById("saveSessionBtn");
+    if(btn) btn.textContent = "Ajouter";
+
+  } else {
+    data.push(session);
+    alert("Séance ajoutée 👍");
+  }
+
+  saveData(data);
+  renderAll();
+
+  document.getElementById("notes").value = "";
+}
 function saveDailyHRV(){const d=hrvDate.value,val=+hrvDailyValue.value||0; if(!d||!val)return alert("Renseigne une date et une HRV."); const arr=loadDailyHRV(),idx=arr.findIndex(x=>x.date===d); if(idx>=0)arr[idx]={date:d,hrv:val}; else arr.push({date:d,hrv:val}); arr.sort((a,b)=>new Date(a.date)-new Date(b.date)); saveDailyHRVData(arr); renderAll()}
 function deleteTodayHRV(){const d=hrvDate.value; saveDailyHRVData(loadDailyHRV().filter(x=>x.date!==d)); renderAll()} function toggleHRVHistory(){isHRVExpanded=!isHRVExpanded; renderDailyHRVHistory()} function toggleHistory(){isHistoryExpanded=!isHistoryExpanded; renderHistory()} function toggleWeeklyPlan(){isWeeklyPlanExpanded=!isWeeklyPlanExpanded; renderWeeklyPlan()}
 function saveRace(){saveRaceData({date:raceDate.value||"",type:raceType.value||"Triathlon",priority:racePriority.value||"A"}); renderAll()} function deleteRace(){if(confirm("Supprimer la compétition ?")){localStorage.removeItem(RACE_KEY); window.pushLocalToCloud?.(); renderAll()}} function getRacePhase(days){if(days<=3)return"peak"; if(days<=7)return"taper"; if(days<=21)return"specific"; return"build"}
