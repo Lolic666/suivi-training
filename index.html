@@ -85,13 +85,21 @@ function saveRace(){saveRaceData({date:raceDate.value||"",type:raceType.value||"
 function computePerformanceModel(){const daily={}; load().map(normalizeSession).filter(Boolean).forEach(s=>{daily[s.date]=(daily[s.date]||0)+getSessionLoad(s)}); let ctl=0,atl=0; Object.keys(daily).sort().forEach(d=>{ctl+=(daily[d]-ctl)/42; atl+=(daily[d]-atl)/7}); return {ctl,atl,form:ctl-atl}}
 function getHRVState(){const h=loadDailyHRV().slice().sort((a,b)=>new Date(a.date)-new Date(b.date)); if(h.length<3)return null; const last=h[h.length-1],base=h.slice(-8,-1).map(x=>+x.hrv).filter(Boolean),baseline=base.reduce((a,b)=>a+b,0)/(base.length||1); return {last,baseline,deltaPct:baseline?((last.hrv-baseline)/baseline)*100:0}}
 function durationToMinutes(v){
-  if(!v || !v.includes(":")) return 0;
+  if(!v) return 0;
 
-  const parts = v.split(":").map(Number);
+  // Si c'est déjà un nombre en minutes
+  if(!String(v).includes(":")) return Number(v) || 0;
+
+  const parts = String(v).split(":").map(Number);
 
   if(parts.length === 3){
     const [h,m,s] = parts;
-    return (h*60) + m + (s/60);
+    return (h * 60) + m + (s / 60);
+  }
+
+  if(parts.length === 2){
+    const [h,m] = parts;
+    return (h * 60) + m;
   }
 
   return 0;
