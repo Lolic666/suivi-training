@@ -111,6 +111,7 @@ function renderHRV(){const box=document.getElementById("hrvBox"),h=getHRVState()
 function buildTag(label,cls){return `<span class="tag ${cls}">${label}</span>`}
 
 function editSession(id){
+   alert("EDIT OK : " + id);
   const data = load();
   const index = data.findIndex(s=>String(s.id) === String(id));
 
