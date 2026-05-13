@@ -65,7 +65,31 @@ function load(){const d=safeJson(KEY,"[]"); return Array.isArray(d)?d:[]} functi
 function migrateLegacyData(){if(!localStorage.getItem(KEY)) for(const k of LEGACY_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(KEY,r);break}} if(!localStorage.getItem(ATHLETE_KEY)) for(const k of LEGACY_ATHLETE_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(ATHLETE_KEY,r);break}} if(!localStorage.getItem(HRV_KEY)) for(const k of LEGACY_HRV_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(HRV_KEY,r);break}}}
 function formatDateFR(d){if(!d)return"-"; const x=new Date(String(d).includes("T")?d:d+"T12:00:00"); if(isNaN(x))return d; return `${String(x.getDate()).padStart(2,"0")}/${String(x.getMonth()+1).padStart(2,"0")}/${x.getFullYear()}`} function shortDateFR(d){return formatDateFR(d).slice(0,5)}
 function paceToKmh(p){if(!p||typeof p!=="string"||!p.includes(":"))return 0; const [m,s]=p.trim().replace(",",".").split(":").map(Number); if(Number.isNaN(m)||Number.isNaN(s)||s>=60)return 0; return 60/(m+s/60)}
+
 function formatDurationHours(minutes){const ts=Math.round(Number(minutes||0)*60),h=Math.floor(ts/3600),m=Math.floor((ts%3600)/60),s=ts%60; return `${h}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
+function durationToMinutes(v){
+  if(!v) return 0;
+
+  const str = String(v).trim();
+
+  if(!str.includes(":")){
+    return Number(str) || 0;
+  }
+
+  const parts = str.split(":").map(Number);
+
+  if(parts.length === 3){
+    const [h,m,s] = parts;
+    return (h * 60) + m + (s / 60);
+  }
+
+  if(parts.length === 2){
+    const [m,s] = parts;
+    return m + (s / 60);
+  }
+
+  return 0;
+}
 function normalizeExercise(e){if(!e||typeof e!=="object")return null; const nom=e.nom||e.name||""; if(!nom)return null; const series=+e.series||0,reps=+e.reps||0,poids=+(e.poids??e.weight??0); return {nom,groupe:e.groupe||e.muscle||"",series,reps,poids,volume:+(e.volume??series*reps*poids)}}
 function normalizeSession(s){if(!s||typeof s!=="object")return null; const type=s.type||s.sport||"Séance",allure=s.allure||"",exs=s.exercices||s.exercises||[]; return {id:s.id||Date.now()+Math.floor(Math.random()*100000),date:s.date||new Date().toISOString().slice(0,10),type,d:+(s.d??s.duree??0),dist:+(s.dist??s.distance??0),w:+(s.w??s.watts??s.wattsMoy??0),r:+(s.r??s.rpm??s.cadence??0),bpm:+(s.bpm??s.bpmMoy??0),allure,v:+(s.v??s.vitesse??paceToKmh(allure)??0),swolf:+(s.swolf??0),rpe:+(s.rpe??s.intensite??3),notes:s.notes||"",exercices:Array.isArray(exs)?exs.map(normalizeExercise).filter(Boolean):[]}}
 function getSessionLoad(s){const a=loadAthlete(),factor=a.athleteFactor||0.75,type=s.type; if(type==="Vélo"&&s.w&&s.d){const ftp=a.ftp||240,i=s.w/ftp;return(s.d/60)*i*i*100*factor} if(type==="Course"&&s.bpm&&s.d){const fc=a.fcmax||190,i=s.bpm/fc;return(s.d/60)*i*i*100*factor} if(type==="Marche"&&s.d){const fc=a.fcmax||180,bpm=s.bpm||90,i=(bpm/fc)*0.6;return(s.d/60)*i*i*60*factor} if(type==="Rameur"&&s.w&&s.d){const p=a.rowPma||250,i=s.w/p;return(s.d/60)*i*i*100*factor} if(type==="Ski Erg"&&s.w&&s.d){const i=s.w/250;return(s.d/60)*i*i*90*factor} if(type==="Natation")return(s.d||0)*(s.rpe||3)*2*factor; if(String(type).startsWith("Judo")){const i=((s.bpm||120)/(a.fcmax||180))*0.5+((s.rpe||3)/5)*0.5;return(s.d||0)*i*2.5*factor} if(type==="Musculation"){const vol=(s.exercices||[]).reduce((sum,e)=>sum+(+e.series||0)*(+e.reps||0)*(+e.poids||0),0);return(vol/120)*factor} return 0}
