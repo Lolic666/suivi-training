@@ -17,7 +17,7 @@
 <div class="title-row"><h1 style="margin:0;">Suivi Training</h1><span id="appVersion" class="version-badge">ELITE</span></div>
 <div class="card"><h2>Compte cloud</h2><p class="small">Connecte-toi avec le même compte sur ton Mac et ton iPhone.</p><div class="grid"><input id="authEmail" type="email" placeholder="Email"><input id="authPassword" type="password" placeholder="Mot de passe"></div><div class="actions"><button class="primary" type="button" onclick="signUp()">Créer un compte</button><button class="secondary" type="button" onclick="signIn()">Se connecter</button><button class="danger" type="button" onclick="logout()">Se déconnecter</button><button class="secondary" type="button" onclick="document.getElementById('cloudImportFile').click()">Importer ma sauvegarde vers le cloud</button><button class="primary" type="button" onclick="loadCloudToApp()">Charger mes données cloud</button></div><input type="file" id="cloudImportFile" style="display:none" accept=".json,application/json"><div id="authStatus" class="stat">Non connecté.</div></div>
 <div class="card"><h2>Athlète</h2><p class="small">Informations de référence pour tes analyses.</p><div class="grid"><input id="athleteNom" type="text" placeholder="Nom du sportif"><input id="vo2" type="number" step="0.1" placeholder="VO2 max"><input id="ftp" type="number" step="1" placeholder="FTP vélo"><input id="pma" type="number" step="1" placeholder="PMA vélo"><input id="rowPma" type="number" step="1" placeholder="PMA rameur"><input id="fcmax" type="number" step="1" placeholder="FC max"><input id="poids" type="number" step="0.1" placeholder="Poids"><input id="mg" type="number" step="0.1" placeholder="% masse grasse"></div><div class="actions"><button class="primary" type="button" onclick="saveAthlete()">Sauvegarder l’athlète</button></div></div>
-<div class="card"><h2>Nouvelle séance</h2><div class="grid"><div><label class="small">Date</label><input type="date" id="date"></div><div><label class="small">Sport</label><select id="sport"><option value="">Choisir un sport</option><option>Musculation</option><option>Vélo</option><option>Rameur</option><option>Ski Erg</option><option>Course</option><option>Natation</option><option>Judo (technique)</option><option>Judo (intense)</option><option>Marche</option></select></div></div><div id="muscuSection" class="hidden"><button class="secondary" type="button" onclick="addExo()">+ Ajouter un exercice</button><div id="exos"></div></div><div id="fields" class="hidden"><div class="grid"><input id="duree" class="hidden" type="text" placeholder="Durée HH:MM:SS (ex : 01:15:30)"><input id="distance" class="hidden" type="number" step="0.01" placeholder="Distance"><input id="watts" class="hidden" type="number" placeholder="Watts moyen"><input id="rpm" class="hidden" type="number" placeholder="RPM / cadence"><input id="bpm" class="hidden" type="number" placeholder="BPM moyen"><input id="allure" class="hidden" type="text" placeholder="Allure min/km (ex: 5:15)"><input id="vitesse" class="hidden" type="number" step="0.01" placeholder="Vitesse moyenne (auto)"><input id="swolf" class="hidden" type="number" placeholder="SWOLF"><input id="rpe" class="hidden" type="number" min="1" max="5" placeholder="RPE 1-5"></div><div id="courseInfo" class="small hidden"></div></div><textarea id="notes" placeholder="Notes"></textarea><div class="actions"><button class="primary" type="button" onclick="saveSession()">Ajouter</button><button class="secondary" type="button" onclick="exportData()">Exporter</button><button class="secondary" type="button" onclick="document.getElementById('file').click()">Importer</button><button class="danger" type="button" onclick="clearData()">Tout supprimer</button></div><input type="file" id="file" style="display:none" accept=".json,application/json"></div>
+<div class="card"><h2>Nouvelle séance</h2><div class="grid"><div><label class="small">Date</label><input type="date" id="date"></div><div><label class="small">Sport</label><select id="sport"><option value="">Choisir un sport</option><option>Musculation</option><option>Vélo</option><option>Rameur</option><option>Ski Erg</option><option>Course</option><option>Natation</option><option>Judo (technique)</option><option>Judo (intense)</option><option>Marche</option></select></div></div><div id="muscuSection" class="hidden"><button class="secondary" type="button" onclick="addExo()">+ Ajouter un exercice</button><div id="exos"></div></div><div id="fields" class="hidden"><div class="grid"><input id="duree" class="hidden" type="text" placeholder="Durée HH:MM:SS (ex : 01:15:30)"><input id="distance" class="hidden" type="number" step="0.01" placeholder="Distance"><input id="watts" class="hidden" type="number" placeholder="Watts moyen"><input id="rpm" class="hidden" type="number" placeholder="RPM / cadence"><input id="bpm" class="hidden" type="number" placeholder="BPM moyen"><input id="allure" class="hidden" type="text" placeholder="Allure min/km (ex: 5:15)"><input id="vitesse" class="hidden" type="number" step="0.01" placeholder="Vitesse moyenne (auto)"><input id="swolf" class="hidden" type="number" placeholder="SWOLF"><input id="rpe" class="hidden" type="number" min="1" max="5" placeholder="RPE 1-5"></div><div id="courseInfo" class="small hidden"></div></div><textarea id="notes" placeholder="Notes"></textarea><div class="actions"><button id="saveSessionBtn" class="primary" type="button" onclick="saveSession()">Ajouter</button>/button><button class="secondary" type="button" onclick="exportData()">Exporter</button><button class="secondary" type="button" onclick="document.getElementById('file').click()">Importer</button><button class="danger" type="button" onclick="clearData()">Tout supprimer</button></div><input type="file" id="file" style="display:none" accept=".json,application/json"></div>
 <div class="card"><h2>Résumé</h2><div class="summary-grid"><div class="summary-box"><strong>Nom</strong><span id="resumeNom">-</span></div><div class="summary-box"><strong>Nombre de séances</strong><span id="resumeCount">0</span></div><div class="summary-box"><strong>Dernière séance</strong><span id="resumeLast" style="font-size:15px;">-</span></div><div class="summary-box"><strong>Charge 7 jours</strong><span id="resumeLoad7">0</span></div></div></div>
 <div class="dashboard-section grid-2"><div class="card"><h2>Objectif compétition</h2><input type="date" id="raceDate"><select id="raceType"><option>Triathlon</option><option>Course à pied</option><option>Judo</option></select><select id="racePriority"><option value="A">Objectif A</option><option value="B">Objectif B</option><option value="C">Objectif C</option></select><div class="actions"><button class="primary" onclick="saveRace()">Enregistrer</button><button class="danger" onclick="deleteRace()">Supprimer la compétition</button></div><div id="racePlanBox" class="stat">Aucune compétition définie.</div></div><div class="card"><h2>Séance du jour</h2><div id="todayRecoBox" class="stat">Pas assez de données pour recommander une séance.</div></div></div>
 <div class="card"><h2>Plan automatique — 7 jours</h2><div id="weeklyPlanBox" class="stat">Calcul du plan...</div><button id="weeklyPlanToggleBtn" class="secondary mini-btn hidden" type="button" onclick="toggleWeeklyPlan()">Voir plus</button></div>
@@ -50,10 +50,11 @@ window.signUp=signUp; window.signIn=signIn; window.logout=logout; window.loadClo
 /* =========================================================
    CODE ORGANISÉ : CONFIG / DONNÉES / FORMULAIRES / RENDU
    ========================================================= */
-const APP_VERSION="ELITE EDIT"; document.getElementById("appVersion").textContent=APP_VERSION;
+const APP_VERSION="ELITE"; document.getElementById("appVersion").textContent=APP_VERSION;
 const KEY="v90_data", ATHLETE_KEY="v90_athlete", HRV_KEY="v90_hrv_daily", WEIGHT_KEY="v90_weight_history", RACE_KEY="v90_race";
 const LEGACY_KEYS=["v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"], LEGACY_ATHLETE_KEYS=["v891_athlete","v89_athlete","v88_athlete","v87_athlete","v86_athlete","v85_athlete","v84_athlete","v82_athlete","v81_athlete","v8_athlete"], LEGACY_HRV_KEYS=["v891_hrv_daily","v89_hrv_daily","v88_hrv_daily","v87_hrv_daily","v86_hrv_daily"], MUSCLES=["Pecs","Biceps","Triceps","Épaules","Dos","Jambes"];
 let isHistoryExpanded=false,isHRVExpanded=false,isWeeklyPlanExpanded=false;
+let editingSessionId = null;
 function safeJson(k,f){try{return JSON.parse(localStorage.getItem(k)||f)}catch{return JSON.parse(f)}}
 function load(){const d=safeJson(KEY,"[]"); return Array.isArray(d)?d:[]} function saveData(d){localStorage.setItem(KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadAthlete(){return safeJson(ATHLETE_KEY,"{}")} function saveAthleteData(a){localStorage.setItem(ATHLETE_KEY,JSON.stringify(a)); window.pushLocalToCloud?.()} function loadDailyHRV(){const d=safeJson(HRV_KEY,"[]"); return Array.isArray(d)?d:[]} function saveDailyHRVData(d){localStorage.setItem(HRV_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadWeightHistory(){const d=safeJson(WEIGHT_KEY,"[]"); return Array.isArray(d)?d:[]} function saveWeightHistory(d){localStorage.setItem(WEIGHT_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadRace(){return safeJson(RACE_KEY,"null")} function saveRaceData(r){localStorage.setItem(RACE_KEY,JSON.stringify(r)); window.pushLocalToCloud?.()}
 function migrateLegacyData(){if(!localStorage.getItem(KEY)) for(const k of LEGACY_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(KEY,r);break}} if(!localStorage.getItem(ATHLETE_KEY)) for(const k of LEGACY_ATHLETE_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(ATHLETE_KEY,r);break}} if(!localStorage.getItem(HRV_KEY)) for(const k of LEGACY_HRV_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(HRV_KEY,r);break}}}
@@ -98,7 +99,20 @@ function setupForm(){
     if(t==="Natation")document.getElementById("swolf").classList.remove("hidden");
   }
 }
-function saveSession(){const data=load(),sport=document.getElementById("sport").value; if(!sport)return alert("Choisis un sport."); if(sport==="Musculation"){const list=[...document.querySelectorAll(".exercise")].map(row=>{const series=+row.querySelector(".exo-series").value||0,reps=+row.querySelector(".exo-reps").value||0,poids=+row.querySelector(".exo-poids").value||0; return {nom:row.querySelector(".exo-nom").value.trim(),groupe:row.querySelector(".exo-groupe").value,series,reps,poids,volume:series*reps*poids}}).filter(x=>x.nom&&x.groupe&&x.series>0&&x.reps>0); if(!list.length)return alert("Ajoute au moins un exercice valide."); data.push({id:Date.now(),date:date.value,type:"Musculation",exercices:list,notes:notes.value||""})} else {const al=["Course","Marche"].includes(sport)?allure.value.trim():"",type=sport.startsWith("Judo")?"Judo":sport; data.push({id:Date.now(),date:date.value,type,d:durationToMinutes(duree.value),dist:+distance.value||0,w:+watts.value||0,r:+rpm.value||0,bpm:+bpm.value||0,allure:al,v:["Course","Marche"].includes(sport)?paceToKmh(al):(+vitesse.value||0),swolf:+swolf.value||0,rpe:+rpe.value||3,notes:notes.value||""})} saveData(data); renderAll()}
+function saveSession(){const data=load(),sport=document.getElementById("sport").value; if(!sport)return alert("Choisis un sport."); if(sport==="Musculation"){const list=[...document.querySelectorAll(".exercise")].map(row=>{const series=+row.querySelector(".exo-series").value||0,reps=+row.querySelector(".exo-reps").value||0,poids=+row.querySelector(".exo-poids").value||0; return {nom:row.querySelector(".exo-nom").value.trim(),groupe:row.querySelector(".exo-groupe").value,series,reps,poids,volume:series*reps*poids}}).filter(x=>x.nom&&x.groupe&&x.series>0&&x.reps>0); if(!list.length)return alert("Ajoute au moins un exercice valide."); data.push({id:Date.now(),date:date.value,type:"Musculation",exercices:list,notes:notes.value||""})} else {const al=["Course","Marche"].includes(sport)?allure.value.trim():"",type=sport.startsWith("Judo")?"Judo":sport; data.push({id:Date.now(),date:date.value,type,d:durationToMinutes(duree.value),dist:+distance.value||0,w:+watts.value||0,r:+rpm.value||0,bpm:+bpm.value||0,allure:al,v:["Course","Marche"].includes(sport)?paceToKmh(al):(+vitesse.value||0),swolf:+swolf.value||0,rpe:+rpe.value||3,notes:notes.value||""})}if(editingSessionId !== null){
+  const index = data.findIndex(s => String(s.id) === String(editingSessionId));
+
+  if(index !== -1){
+    data[index] = data[data.length - 1];
+    data[index].id = editingSessionId;
+    data.pop();
+  }
+
+  editingSessionId = null;
+
+  const btn = document.getElementById("saveSessionBtn");
+  if(btn) btn.textContent = "Ajouter";
+} saveData(data); renderAll()}
 function saveDailyHRV(){const d=hrvDate.value,val=+hrvDailyValue.value||0; if(!d||!val)return alert("Renseigne une date et une HRV."); const arr=loadDailyHRV(),idx=arr.findIndex(x=>x.date===d); if(idx>=0)arr[idx]={date:d,hrv:val}; else arr.push({date:d,hrv:val}); arr.sort((a,b)=>new Date(a.date)-new Date(b.date)); saveDailyHRVData(arr); renderAll()}
 function deleteTodayHRV(){const d=hrvDate.value; saveDailyHRVData(loadDailyHRV().filter(x=>x.date!==d)); renderAll()} function toggleHRVHistory(){isHRVExpanded=!isHRVExpanded; renderDailyHRVHistory()} function toggleHistory(){isHistoryExpanded=!isHistoryExpanded; renderHistory()} function toggleWeeklyPlan(){isWeeklyPlanExpanded=!isWeeklyPlanExpanded; renderWeeklyPlan()}
 function saveRace(){saveRaceData({date:raceDate.value||"",type:raceType.value||"Triathlon",priority:racePriority.value||"A"}); renderAll()} function deleteRace(){if(confirm("Supprimer la compétition ?")){localStorage.removeItem(RACE_KEY); window.pushLocalToCloud?.(); renderAll()}} function getRacePhase(days){if(days<=3)return"peak"; if(days<=7)return"taper"; if(days<=21)return"specific"; return"build"}
@@ -112,79 +126,37 @@ function buildTag(label,cls){return `<span class="tag ${cls}">${label}</span>`}
 
 function editSession(id){
   const data = load();
-  const index = data.findIndex(s=>String(s.id) === String(id));
+  const s = data.map(normalizeSession).find(x => String(x.id) === String(id));
 
-  if(index === -1){
+  if(!s){
     alert("Séance introuvable.");
     return;
   }
 
-  const original = data[index];
-  const s = normalizeSession(original);
+  editingSessionId = id;
 
-  const newDate = prompt("Date (YYYY-MM-DD)", s.date);
-  if(newDate !== null && newDate.trim()) s.date = newDate.trim();
+  date.value = s.date || "";
 
-  const newDuration = prompt("Durée HH:MM:SS", formatDurationHours(s.d));
-  if(newDuration !== null && newDuration.trim()){
-    s.d = durationToMinutes(newDuration.trim());
-  }
+  if(s.type === "Judo") sport.value = "Judo (technique)";
+  else sport.value = s.type;
 
-  if(s.type !== "Musculation"){
-    if(!s.type.startsWith("Judo")){
-      const newDist = prompt("Distance", s.dist || 0);
-      if(newDist !== null) s.dist = Number(newDist) || 0;
-    } else {
-      s.dist = 0;
-    }
+  sport.onchange();
 
-    const newWatts = prompt("Watts", s.w || 0);
-    if(newWatts !== null) s.w = Number(newWatts) || 0;
+  duree.value = formatDurationHours(s.d || 0);
+  distance.value = s.dist || "";
+  watts.value = s.w || "";
+  rpm.value = s.r || "";
+  bpm.value = s.bpm || "";
+  allure.value = s.allure || "";
+  vitesse.value = s.v || "";
+  swolf.value = s.swolf || "";
+  rpe.value = s.rpe || "";
+  notes.value = s.notes || "";
 
-    const newBpm = prompt("BPM", s.bpm || 0);
-    if(newBpm !== null) s.bpm = Number(newBpm) || 0;
+  const btn = document.getElementById("saveSessionBtn");
+  if(btn) btn.textContent = "Mettre à jour la séance";
 
-    if(s.type === "Course" || s.type === "Marche"){
-      const newAllure = prompt("Allure min/km", s.allure || "");
-      if(newAllure !== null){
-        s.allure = newAllure.trim();
-        s.v = paceToKmh(s.allure);
-      }
-    }
-
-    const newRpe = prompt("RPE 1-5", s.rpe || 3);
-    if(newRpe !== null) s.rpe = Number(newRpe) || 3;
-  }
-
-  const newNotes = prompt("Notes", s.notes || "");
-  if(newNotes !== null) s.notes = newNotes;
-
-  data[index] = {
-    ...original,
-    id: original.id || s.id,
-    date: s.date,
-    type: s.type,
-    d: Number(s.d) || 0,
-    dist: Number(s.dist) || 0,
-    w: Number(s.w) || 0,
-    r: Number(s.r) || 0,
-    bpm: Number(s.bpm) || 0,
-    allure: s.allure || "",
-    v: Number(s.v) || 0,
-    swolf: Number(s.swolf) || 0,
-    rpe: Number(s.rpe) || 3,
-    notes: s.notes || "",
-    exercices: s.exercices || []
-  };
-
-  saveData(data);
-  renderAll();
-
-  alert(
-    "Séance modifiée 👍\n" +
-    "Durée : " + formatDurationHours(data[index].d) + "\n" +
-    "Charge : " + Math.round(getSessionLoad(data[index]))
-  );
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function deleteSession(id){
   if(!confirm("Supprimer cette séance ?"))return;
