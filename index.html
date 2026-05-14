@@ -96,7 +96,61 @@ function getSessionLoad(s){const a=loadAthlete(),factor=a.athleteFactor||0.75,ty
 function hydrateAthlete(){const a=loadAthlete(); [["athleteNom","nom"],["vo2","vo2"],["ftp","ftp"],["pma","pma"],["rowPma","rowPma"],["fcmax","fcmax"],["poids","poids"],["mg","mg"]].forEach(([id,k])=>{const el=document.getElementById(id); if(el)el.value=a[k]||""})}
 function updateWeightHistoryFromAthlete(a){if(!a.poids)return; const today=new Date().toISOString().slice(0,10),data=loadWeightHistory(),idx=data.findIndex(x=>x.date===today); if(idx>=0)data[idx]={date:today,poids:Number(a.poids)}; else data.push({date:today,poids:Number(a.poids)}); data.sort((a,b)=>new Date(a.date)-new Date(b.date)); saveWeightHistory(data)}
 function saveAthlete(){const a={nom:athleteNom.value||"",vo2:+vo2.value||0,ftp:+ftp.value||0,pma:+pma.value||0,rowPma:+rowPma.value||0,fcmax:+fcmax.value||0,poids:+poids.value||0,mg:+mg.value||0,athleteFactor:0.75}; saveAthleteData(a); updateWeightHistoryFromAthlete(a); renderAll(); alert("Athlète enregistré")}
-function addExo(data=null){const exosDiv=document.getElementById("exos"); if(!exosDiv)return; const div=document.createElement("div"); div.className="exercise"; div.innerHTML=`<input class="exo-nom" placeholder="Nom exercice" value="${data?.nom||""}"><select class="exo-groupe"><option value="">Groupe musculaire</option>${MUSCLES.map(m=>`<option ${data?.groupe===m?"selected":""}>${m}</option>`).join("")}</select><div class="grid"><input class="exo-series" placeholder="Séries" type="number" value="${data?.series||""}"><input class="exo-reps" placeholder="Reps" type="number" value="${data?.reps||""}"><input class="exo-poids" placeholder="Poids" type="number" value="${data?.poids||""}"></div><button class="danger" type="button" onclick="this.parentElement.remove()">Supprimer</button>`; exosDiv.appendChild(div)}
+function addExo(data = null){
+
+  const exosDiv = document.getElementById("exos");
+  if(!exosDiv) return;
+
+  const muscles = Array.isArray(MUSCLES)
+    ? MUSCLES
+    : ["Pecs","Biceps","Triceps","Épaules","Dos","Jambes"];
+
+  const div = document.createElement("div");
+  div.className = "exercise";
+
+  div.innerHTML = `
+    <input class="exo-nom"
+           placeholder="Nom exercice"
+           value="${data?.nom || ""}">
+
+    <select class="exo-groupe">
+      <option value="">Groupe musculaire</option>
+
+      ${muscles.map(m => `
+        <option value="${m}"
+          ${data?.groupe === m ? "selected" : ""}>
+          ${m}
+        </option>
+      `).join("")}
+
+    </select>
+
+    <div class="grid">
+      <input class="exo-series"
+             type="number"
+             placeholder="Séries"
+             value="${data?.series || ""}">
+
+      <input class="exo-reps"
+             type="number"
+             placeholder="Reps"
+             value="${data?.reps || ""}">
+
+      <input class="exo-poids"
+             type="number"
+             placeholder="Poids"
+             value="${data?.poids || ""}">
+    </div>
+
+    <button class="danger"
+            type="button"
+            onclick="this.parentElement.remove()">
+      Supprimer
+    </button>
+  `;
+
+  exosDiv.appendChild(div);
+}
 function hideAllFields(){["duree","distance","watts","rpm","bpm","allure","vitesse","swolf","rpe","courseInfo"].forEach(id=>document.getElementById(id)?.classList.add("hidden"))}
 function updateCoursePreview(){const sport=document.getElementById("sport")?.value,allure=document.getElementById("allure"),vitesse=document.getElementById("vitesse"),info=document.getElementById("courseInfo"); if(!["Course","Marche"].includes(sport))return; const kmh=paceToKmh(allure.value); vitesse.value=kmh?kmh.toFixed(2):""; info.innerHTML=kmh?`Allure ${allure.value}/km → ${kmh.toFixed(2)} km/h`:"Renseigne une allure au format min/km, par exemple 5:15"}
 function setupForm(){
