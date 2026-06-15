@@ -92,8 +92,30 @@ import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstat
 const firebaseConfig={apiKey:"AIzaSyCmryU6neeBQ1l-FLGAGJNylw_KP01WqBA",authDomain:"suivi-training.firebaseapp.com",projectId:"suivi-training",storageBucket:"suivi-training.firebasestorage.app",messagingSenderId:"242239418061",appId:"1:242239418061:web:72e9dcbc807fa249640384"};
 const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
 function userDoc(){const user=auth.currentUser; if(!user) return null; return doc(db,"users",user.uid,"app","main");}
-async function signUp(){try{await createUserWithEmailAndPassword(auth,authEmail.value.trim(),authPassword.value)}catch(e){alert(e.message)}}
-async function signIn(){try{await signInWithEmailAndPassword(auth,authEmail.value.trim(),authPassword.value)}catch(e){alert(e.message)}}
+async function signUp(){
+  const emailEl=document.getElementById("authEmail");
+  const passEl=document.getElementById("authPassword");
+  const statusEl=document.getElementById("authStatus");
+  try{
+    if(statusEl) statusEl.innerHTML="Création du compte en cours...";
+    await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);
+  }catch(e){
+    if(statusEl) statusEl.innerHTML="Erreur création compte : "+e.message;
+    alert(e.message);
+  }
+}
+async function signIn(){
+  const emailEl=document.getElementById("authEmail");
+  const passEl=document.getElementById("authPassword");
+  const statusEl=document.getElementById("authStatus");
+  try{
+    if(statusEl) statusEl.innerHTML="Connexion en cours...";
+    await signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);
+  }catch(e){
+    if(statusEl) statusEl.innerHTML="Erreur connexion : "+e.message;
+    alert(e.message);
+  }
+}
 async function logout(){try{await signOut(auth)}catch(e){alert(e.message)}}
 async function saveCloudData(payload){const ref=userDoc(); if(!ref) return false; await setDoc(ref,payload,{merge:true}); return true;}
 async function loadCloudData(){const ref=userDoc(); if(!ref){alert("Tu n'es pas connecté.");return null} const snap=await getDoc(ref); if(!snap.exists()) return null; return snap.data();}
