@@ -51,8 +51,14 @@
     <h3>Ajouter un repas</h3>
     <div class="grid">
       <input id="mealName" placeholder="Nom du repas (ex : Déjeuner)">
-      <input id="mealPhoto" type="file" accept="image/*" capture="environment">
+      <button class="primary" type="button" onclick="openMealCamera()">📷 Prendre une photo maintenant</button>
     </div>
+    <div class="inline-btn-row">
+      <button class="secondary mini-btn" type="button" onclick="openMealGallery()">Importer depuis la galerie</button>
+      <button class="secondary mini-btn" type="button" onclick="clearMealPhoto()">Retirer la photo</button>
+    </div>
+    <input id="mealCameraInput" type="file" accept="image/*" capture="environment" style="display:none">
+    <input id="mealGalleryInput" type="file" accept="image/*" style="display:none">
     <div class="grid">
       <input id="openAiApiKey" type="password" placeholder="Clé OpenAI optionnelle pour IA photo réelle">
       <select id="photoAiMode">
@@ -196,7 +202,7 @@ window.signUp=signUp; window.signIn=signIn; window.logout=logout; window.loadClo
 /* =========================================================
    CODE ORGANISÉ : CONFIG / DONNÉES / FORMULAIRES / RENDU
    ========================================================= */
-const APP_VERSION="V11 NUTRITION"; document.getElementById("appVersion").textContent=APP_VERSION;
+const APP_VERSION="V11.02 PHOTO"; document.getElementById("appVersion").textContent=APP_VERSION;
 const KEY="v90_data", ATHLETE_KEY="v90_athlete", HRV_KEY="v90_hrv_daily", WEIGHT_KEY="v90_weight_history", RACE_KEY="v90_race", NUTRITION_KEY="v11_nutrition_meals", NUTRITION_PROFILE_KEY="v11_nutrition_profile";
 const LEGACY_KEYS=["v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"], LEGACY_ATHLETE_KEYS=["v891_athlete","v89_athlete","v88_athlete","v87_athlete","v86_athlete","v85_athlete","v84_athlete","v82_athlete","v81_athlete","v8_athlete"], LEGACY_HRV_KEYS=["v891_hrv_daily","v89_hrv_daily","v88_hrv_daily","v87_hrv_daily","v86_hrv_daily"], MUSCLES=["Pecs","Biceps","Triceps","Épaules","Dos","Jambes"];
 let isHistoryExpanded=false,isHRVExpanded=false,isWeeklyPlanExpanded=false;
@@ -310,9 +316,34 @@ function guessMealFromPhotoName(fileName=""){
   if(n.includes("petit")||n.includes("breakfast")||n.includes("dej"))return [{food:"Flocons d’avoine",grams:60},{food:"Fromage blanc 0%",grams:200},{food:"Banane",grams:120}];
   return [{food:"Riz basmati cuit",grams:160},{food:"Poulet blanc",grams:150},{food:"Brocoli",grams:120},{food:"Huile d’olive",grams:10}];
 }
+function openMealCamera(){
+  const input=document.getElementById("mealCameraInput");
+  if(input) input.click();
+}
+function openMealGallery(){
+  const input=document.getElementById("mealGalleryInput");
+  if(input) input.click();
+}
+function clearMealPhoto(){
+  window.__mealPhotoFile=null;
+  ["mealCameraInput","mealGalleryInput"].forEach(id=>{const el=document.getElementById(id); if(el) el.value="";});
+  const box=document.getElementById("mealPhotoPreview"), img=document.getElementById("mealPhotoImg"), ai=document.getElementById("mealAiBox");
+  if(box) box.textContent="";
+  if(img){img.src=""; img.classList.add("hidden");}
+  if(ai) ai.innerHTML="Photo retirée. Tu peux en prendre une nouvelle ou importer une image.";
+}
+function handleMealPhotoSelected(e){
+  const f=e.target.files?.[0];
+  const box=document.getElementById("mealPhotoPreview"), img=document.getElementById("mealPhotoImg"), ai=document.getElementById("mealAiBox");
+  if(!f) return;
+  window.__mealPhotoFile=f;
+  if(box) box.textContent=`Photo prête : ${f.name || "prise avec l’appareil photo"}`;
+  if(img){img.src=URL.createObjectURL(f);img.classList.remove("hidden");}
+  if(ai) ai.innerHTML="Photo chargée. Clique sur 📷 Analyser la photo pour pré-remplir les aliments.";
+}
 async function analyzeMealPhoto(){
-  const input=document.getElementById("mealPhoto"), box=document.getElementById("mealAiBox"), mode=document.getElementById("photoAiMode")?.value||"demo";
-  const file=input?.files?.[0];
+  const box=document.getElementById("mealAiBox"), mode=document.getElementById("photoAiMode")?.value||"demo";
+  const file=window.__mealPhotoFile || document.getElementById("mealCameraInput")?.files?.[0] || document.getElementById("mealGalleryInput")?.files?.[0];
   if(!file){ if(box)box.innerHTML="Ajoute d’abord une photo du repas."; return; }
   if(box)box.innerHTML="Analyse de la photo en cours...";
   const img=document.getElementById("mealPhotoImg");
@@ -351,7 +382,7 @@ function setupNutrition(){
   const dt=document.getElementById("nutritionDayType"); if(dt&&profile.dayType)dt.value=profile.dayType;
   const goal=document.getElementById("nutritionGoal"); if(goal&&profile.goal)goal.value=profile.goal;
   ["nutritionDate","nutritionDayType","nutritionGoal"].forEach(id=>document.getElementById(id)?.addEventListener("change",renderNutrition));
-  document.getElementById("mealPhoto")?.addEventListener("change",function(e){const f=e.target.files?.[0],box=document.getElementById("mealPhotoPreview"),img=document.getElementById("mealPhotoImg"); if(box)box.textContent=f?`Photo sélectionnée : ${f.name}`:""; if(f&&img){img.src=URL.createObjectURL(f);img.classList.remove("hidden");}});
+  ["mealCameraInput","mealGalleryInput"].forEach(id=>document.getElementById(id)?.addEventListener("change",handleMealPhotoSelected));
   if(document.getElementById("mealFoodRows")&&!document.querySelector("#mealFoodRows .exercise"))addMealFoodRow();
 }
 
@@ -628,7 +659,7 @@ function renderAll(){hydrateAthlete();renderNutrition();renderSummary();renderFo
 function exportData(){const payload={sessions:load(),athlete:loadAthlete(),hrvDaily:loadDailyHRV(),race:loadRace(),weightHistory:loadWeightHistory(),nutritionMeals:loadNutritionMeals(),nutritionProfile:loadNutritionProfile()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a"); a.href=URL.createObjectURL(blob);a.download="v10_clean_backup.json";a.click();URL.revokeObjectURL(a.href)}
 function clearData(){if(confirm("Supprimer toutes les données locales ?")){localStorage.removeItem(KEY);localStorage.removeItem(HRV_KEY);localStorage.removeItem(RACE_KEY);localStorage.removeItem(WEIGHT_KEY);renderAll()}}
 document.getElementById("file")?.addEventListener("change",function(e){const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(){try{const p=JSON.parse(r.result),sessions=Array.isArray(p)?p:(p.sessions||p.data||p.seances||[]); if(!confirm("Remplacer les données actuelles ?"))return; saveData(sessions.map(normalizeSession).filter(Boolean)); if(p.athlete)saveAthleteData(p.athlete); if(Array.isArray(p.hrvDaily))saveDailyHRVData(p.hrvDaily); if(Array.isArray(p.weightHistory))saveWeightHistory(p.weightHistory); if(p.race)saveRaceData(p.race); if(Array.isArray(p.nutritionMeals))saveNutritionMeals(p.nutritionMeals); if(p.nutritionProfile)saveNutritionProfile(p.nutritionProfile); alert("Import réussi"); renderAll()}catch(err){alert("Erreur import JSON")} e.target.value=""}; r.readAsText(f)});
-window.addMealFoodRow=addMealFoodRow;window.saveNutritionMeal=saveNutritionMeal;window.deleteNutritionMeal=deleteNutritionMeal;window.analyzeMealPhoto=analyzeMealPhoto;window.fillDemoMeal=fillDemoMeal;window.saveAthlete=saveAthlete;window.editSession=editSession;window.deleteSession=deleteSession;window.addExo=addExo;window.saveSession=saveSession;window.exportData=exportData;window.clearData=clearData;window.saveDailyHRV=saveDailyHRV;window.deleteTodayHRV=deleteTodayHRV;window.toggleHRVHistory=toggleHRVHistory;window.toggleHistory=toggleHistory;window.toggleWeeklyPlan=toggleWeeklyPlan;window.saveRace=saveRace;window.deleteRace=deleteRace;window.renderAll=renderAll;
+window.addMealFoodRow=addMealFoodRow;window.saveNutritionMeal=saveNutritionMeal;window.deleteNutritionMeal=deleteNutritionMeal;window.analyzeMealPhoto=analyzeMealPhoto;window.fillDemoMeal=fillDemoMeal;window.openMealCamera=openMealCamera;window.openMealGallery=openMealGallery;window.clearMealPhoto=clearMealPhoto;window.saveAthlete=saveAthlete;window.editSession=editSession;window.deleteSession=deleteSession;window.addExo=addExo;window.saveSession=saveSession;window.exportData=exportData;window.clearData=clearData;window.saveDailyHRV=saveDailyHRV;window.deleteTodayHRV=deleteTodayHRV;window.toggleHRVHistory=toggleHRVHistory;window.toggleHistory=toggleHistory;window.toggleWeeklyPlan=toggleWeeklyPlan;window.saveRace=saveRace;window.deleteRace=deleteRace;window.renderAll=renderAll;
 migrateLegacyData();setupForm();setupNutrition();hydrateAthlete();renderAll();
 </script>
 </body>
