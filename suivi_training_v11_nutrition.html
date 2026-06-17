@@ -28,8 +28,8 @@
 <div class="card"><h2>Résumé</h2><div class="summary-grid"><div class="summary-box"><strong>Nom</strong><span id="resumeNom">-</span></div><div class="summary-box"><strong>Nombre de séances</strong><span id="resumeCount">0</span></div><div class="summary-box"><strong>Dernière séance</strong><span id="resumeLast" style="font-size:15px;">-</span></div><div class="summary-box"><strong>Charge 7 jours</strong><span id="resumeLoad7">0</span></div></div></div>
 
 <div class="card" id="nutritionModule">
-  <h2>Nutrition V11.04 — Base aliments & charge glycémique</h2>
-  <p class="small">Module ajouté sans modifier tes données sport. Base aliments enrichie : protéines, calories, macros, IG et charge glycémique.</p>
+  <h2>Nutrition V11.06 — Base aliments + mémoire IG</h2>
+  <p class="small">Module ajouté sans modifier tes données sport. Base locale + recherche en ligne Open Food Facts + mémoire d'indice glycémique : quand tu valides un IG, l'app le garde pour les prochaines fois.</p>
 
   <div class="grid">
     <input id="nutriTargetCalories" type="number" placeholder="Objectif calories du jour">
@@ -55,8 +55,8 @@
   </div>
 
   <div class="card" style="background:rgba(17,24,39,.75);margin-top:12px;">
-    <h3>Base alimentaire V11.04</h3>
-    <p class="small">Tape un aliment puis ajoute-le. Exemple : beef jerky, riz, poulet, banane, skyr, pâtes...</p>
+    <h3>Base alimentaire V11.06</h3>
+    <p class="small">Tape un aliment puis ajoute-le. La base locale répond vite, la recherche en ligne va chercher les calories/macros, et la mémoire IG réutilise les valeurs déjà validées.</p>
     <div class="grid">
       <input id="foodSearchInput" list="foodSuggestions" placeholder="Rechercher un aliment">
       <input id="foodSearchGrams" type="number" placeholder="Quantité g" value="100">
@@ -64,9 +64,13 @@
     <datalist id="foodSuggestions"></datalist>
     <div class="actions">
       <button class="primary" type="button" onclick="addFoodFromSearch()">+ Ajouter depuis la base</button>
+      <button class="secondary" type="button" onclick="searchFoodOnlineFromSearch()">🌐 Chercher en ligne</button>
+      <button class="secondary" type="button" onclick="showGICache()">🧠 Voir mémoire IG</button>
       <button class="secondary" type="button" onclick="addFoodRow()">+ Aliment personnalisé</button>
     </div>
     <div id="foodDatabaseInfo" class="small"></div>
+    <div id="onlineFoodResults" class="list"></div>
+    <div id="giMemoryBox" class="list"></div>
   </div>
 
   <div id="foodRows"></div>
@@ -98,8 +102,8 @@ async function signIn(){try{await signInWithEmailAndPassword(auth,authEmail.valu
 async function logout(){try{await signOut(auth)}catch(e){alert(e.message)}}
 async function saveCloudData(payload){const ref=userDoc(); if(!ref) return false; await setDoc(ref,payload,{merge:true}); return true;}
 async function loadCloudData(){const ref=userDoc(); if(!ref){alert("Tu n'es pas connecté.");return null} const snap=await getDoc(ref); if(!snap.exists()) return null; return snap.data();}
-async function importBackupToCloud(file){const text=await file.text(); const parsed=JSON.parse(text); const sessions=Array.isArray(parsed)?parsed:Array.isArray(parsed.sessions)?parsed.sessions:Array.isArray(parsed.data)?parsed.data:Array.isArray(parsed.seances)?parsed.seances:[]; const payload={sessions,athlete:parsed.athlete||{},hrvDaily:Array.isArray(parsed.hrvDaily)?parsed.hrvDaily:[],race:parsed.race||null,weightHistory:Array.isArray(parsed.weightHistory)?parsed.weightHistory:[],nutritionTargets:parsed.nutritionTargets||parsed.v11_nutrition_targets||{},nutritionMeals:Array.isArray(parsed.nutritionMeals)?parsed.nutritionMeals:[]}; const ok=await saveCloudData(payload); if(ok) alert("Import cloud OK : "+sessions.length+" séance(s)");}
-async function loadCloudToApp(){const data=await loadCloudData(); if(!data){alert("Aucune donnée cloud");return} localStorage.setItem("v90_data",JSON.stringify(data.sessions||[])); localStorage.setItem("v90_athlete",JSON.stringify(data.athlete||{})); localStorage.setItem("v90_hrv_daily",JSON.stringify(data.hrvDaily||[])); localStorage.setItem("v90_race",JSON.stringify(data.race||null)); localStorage.setItem("v90_weight_history",JSON.stringify(data.weightHistory||[])); localStorage.setItem("v11_nutrition_targets",JSON.stringify(data.nutritionTargets||{})); localStorage.setItem("v11_nutrition_meals",JSON.stringify(data.nutritionMeals||[])); if(data.updatedAt){ window.__lastLocalCloudPush = Number(data.updatedAt) || 0; } alert("Données chargées : "+((data.sessions||[]).length)+" séance(s)"); window.renderAll?.();}
+async function importBackupToCloud(file){const text=await file.text(); const parsed=JSON.parse(text); const sessions=Array.isArray(parsed)?parsed:Array.isArray(parsed.sessions)?parsed.sessions:Array.isArray(parsed.data)?parsed.data:Array.isArray(parsed.seances)?parsed.seances:[]; const payload={sessions,athlete:parsed.athlete||{},hrvDaily:Array.isArray(parsed.hrvDaily)?parsed.hrvDaily:[],race:parsed.race||null,weightHistory:Array.isArray(parsed.weightHistory)?parsed.weightHistory:[],nutritionTargets:parsed.nutritionTargets||parsed.v11_nutrition_targets||{},nutritionMeals:Array.isArray(parsed.nutritionMeals)?parsed.nutritionMeals:[],giCache:parsed.giCache||parsed.v11_glycemic_index_cache||{}}; const ok=await saveCloudData(payload); if(ok) alert("Import cloud OK : "+sessions.length+" séance(s)");}
+async function loadCloudToApp(){const data=await loadCloudData(); if(!data){alert("Aucune donnée cloud");return} localStorage.setItem("v90_data",JSON.stringify(data.sessions||[])); localStorage.setItem("v90_athlete",JSON.stringify(data.athlete||{})); localStorage.setItem("v90_hrv_daily",JSON.stringify(data.hrvDaily||[])); localStorage.setItem("v90_race",JSON.stringify(data.race||null)); localStorage.setItem("v90_weight_history",JSON.stringify(data.weightHistory||[])); localStorage.setItem("v11_nutrition_targets",JSON.stringify(data.nutritionTargets||{})); localStorage.setItem("v11_nutrition_meals",JSON.stringify(data.nutritionMeals||[])); localStorage.setItem("v11_glycemic_index_cache",JSON.stringify(data.giCache||{})); if(data.updatedAt){ window.__lastLocalCloudPush = Number(data.updatedAt) || 0; } alert("Données chargées : "+((data.sessions||[]).length)+" séance(s)"); window.renderAll?.();}
 async function pushLocalToCloud(){
   try{
     const payload = {
@@ -110,6 +114,7 @@ async function pushLocalToCloud(){
       weightHistory: JSON.parse(localStorage.getItem("v90_weight_history") || "[]"),
       nutritionTargets: JSON.parse(localStorage.getItem("v11_nutrition_targets") || "{}"),
       nutritionMeals: JSON.parse(localStorage.getItem("v11_nutrition_meals") || "[]"),
+      giCache: JSON.parse(localStorage.getItem("v11_glycemic_index_cache") || "{}"),
       updatedAt: Date.now()
     };
 
@@ -175,6 +180,7 @@ onAuthStateChanged(auth, async(user)=>{
     localStorage.setItem("v90_weight_history", JSON.stringify(data.weightHistory || []));
     localStorage.setItem("v11_nutrition_targets", JSON.stringify(data.nutritionTargets || {}));
     localStorage.setItem("v11_nutrition_meals", JSON.stringify(data.nutritionMeals || []));
+    localStorage.setItem("v11_glycemic_index_cache", JSON.stringify(data.giCache || {}));
 
     window.renderAll?.();
   }, (err)=>{
@@ -189,9 +195,9 @@ window.signUp=signUp; window.signIn=signIn; window.logout=logout; window.loadClo
 /* =========================================================
    CODE ORGANISÉ : CONFIG / DONNÉES / FORMULAIRES / RENDU
    ========================================================= */
-const APP_VERSION="🥩 V11.04 BASE ALIMENTS"; document.getElementById("appVersion").textContent=APP_VERSION;
+const APP_VERSION="🧠 V11.06 MEMOIRE IG"; document.getElementById("appVersion").textContent=APP_VERSION;
 const KEY="v90_data", ATHLETE_KEY="v90_athlete", HRV_KEY="v90_hrv_daily", WEIGHT_KEY="v90_weight_history", RACE_KEY="v90_race";
-const NUTRITION_TARGETS_KEY="v11_nutrition_targets", NUTRITION_MEALS_KEY="v11_nutrition_meals";
+const NUTRITION_TARGETS_KEY="v11_nutrition_targets", NUTRITION_MEALS_KEY="v11_nutrition_meals", GI_CACHE_KEY="v11_glycemic_index_cache";
 const LEGACY_KEYS=["v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"], LEGACY_ATHLETE_KEYS=["v891_athlete","v89_athlete","v88_athlete","v87_athlete","v86_athlete","v85_athlete","v84_athlete","v82_athlete","v81_athlete","v8_athlete"], LEGACY_HRV_KEYS=["v891_hrv_daily","v89_hrv_daily","v88_hrv_daily","v87_hrv_daily","v86_hrv_daily"], MUSCLES=["Pecs","Biceps","Triceps","Épaules","Dos","Jambes"];
 let isHistoryExpanded=false,isHRVExpanded=false,isWeeklyPlanExpanded=false;
 let editingSessionId = null;
@@ -201,6 +207,10 @@ function loadNutritionTargets(){return safeJson(NUTRITION_TARGETS_KEY,"{}")}
 function saveNutritionTargetsData(d){localStorage.setItem(NUTRITION_TARGETS_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()}
 function loadNutritionMeals(){const d=safeJson(NUTRITION_MEALS_KEY,"[]"); return Array.isArray(d)?d:[]}
 function saveNutritionMealsData(d){localStorage.setItem(NUTRITION_MEALS_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()}
+function loadGICache(){const d=safeJson(GI_CACHE_KEY,"{}"); return d&&typeof d==="object"&&!Array.isArray(d)?d:{}}
+function saveGICache(d){localStorage.setItem(GI_CACHE_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()}
+function rememberGI(name,ig,source="manuel"){const n=normalizeFoodText(name); const v=Number(ig); if(!n||!Number.isFinite(v)||v<0)return; const cache=loadGICache(); cache[n]={name:String(name||"").trim(),ig:Math.max(0,Math.min(100,Math.round(v))),source,date:new Date().toISOString().slice(0,10)}; saveGICache(cache)}
+function getRememberedGI(name){const n=normalizeFoodText(name); if(!n)return null; const cache=loadGICache(); if(cache[n])return cache[n]; for(const [k,v] of Object.entries(cache)){if(n.includes(k)||k.includes(n))return v;} return null}
 
 function migrateLegacyData(){if(!localStorage.getItem(KEY)) for(const k of LEGACY_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(KEY,r);break}} if(!localStorage.getItem(ATHLETE_KEY)) for(const k of LEGACY_ATHLETE_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(ATHLETE_KEY,r);break}} if(!localStorage.getItem(HRV_KEY)) for(const k of LEGACY_HRV_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(HRV_KEY,r);break}}}
 function formatDateFR(d){if(!d)return"-"; const x=new Date(String(d).includes("T")?d:d+"T12:00:00"); if(isNaN(x))return d; return `${String(x.getDate()).padStart(2,"0")}/${String(x.getMonth()+1).padStart(2,"0")}/${x.getFullYear()}`} function shortDateFR(d){return formatDateFR(d).slice(0,5)}
@@ -544,21 +554,105 @@ function foodEntries(){return Object.keys(FOOD_DB).sort((a,b)=>a.localeCompare(b
 function matchFood(name){
   const raw=String(name||"").trim();
   const norm=normalizeFoodText(raw);
-  if(!norm)return {kcal:0,p:0,g:0,l:0,ig:0,matched:""};
-  for(const key of Object.keys(FOOD_DB)){if(normalizeFoodText(key)===norm)return {...FOOD_DB[key],matched:key};}
-  for(const [alias,target] of Object.entries(FOOD_ALIASES)){if(norm===normalizeFoodText(alias)||norm.includes(normalizeFoodText(alias)))return {...FOOD_DB[target],matched:target};}
-  for(const key of Object.keys(FOOD_DB)){const kn=normalizeFoodText(key); if(kn.includes(norm)||norm.includes(kn))return {...FOOD_DB[key],matched:key};}
-  return {kcal:0,p:0,g:0,l:0,ig:0,matched:""};
+  if(!norm)return {kcal:0,p:0,g:0,l:0,ig:memo?memo.ig:0,matched:memo?memo.name:""};
+  const memo=getRememberedGI(raw);
+  for(const key of Object.keys(FOOD_DB)){if(normalizeFoodText(key)===norm){const base={...FOOD_DB[key],matched:key}; if(memo)base.ig=memo.ig; return base;}}
+  for(const [alias,target] of Object.entries(FOOD_ALIASES)){if(norm===normalizeFoodText(alias)||norm.includes(normalizeFoodText(alias))){const base={...FOOD_DB[target],matched:target}; if(memo)base.ig=memo.ig; return base;}}
+  for(const key of Object.keys(FOOD_DB)){const kn=normalizeFoodText(key); if(kn.includes(norm)||norm.includes(kn)){const base={...FOOD_DB[key],matched:key}; if(memo)base.ig=memo.ig; return base;}}
+  return {kcal:0,p:0,g:0,l:0,ig:memo?memo.ig:0,matched:memo?memo.name:""};
 }
-function populateFoodSuggestions(){const dl=document.getElementById('foodSuggestions'); if(dl&&!dl.__filled){dl.innerHTML=foodEntries().map(k=>`<option value="${k}"></option>`).join(''); dl.__filled=true;} const info=document.getElementById('foodDatabaseInfo'); if(info)info.innerHTML=`Base locale : <strong>${foodEntries().length}</strong> aliments. Astuce : tape “beef jerky”, puis “Ajouter depuis la base”.`;}
-function addFoodFromSearch(){const name=document.getElementById('foodSearchInput')?.value||''; const grams=+document.getElementById('foodSearchGrams')?.value||100; if(!name.trim())return alert('Tape un aliment à ajouter.'); const f=matchFood(name); if(!f.matched)return alert('Aliment non trouvé dans la base. Utilise “Aliment personnalisé” ou donne-moi l’aliment à ajouter.'); addFoodRow({name:f.matched,grams,...f}); document.getElementById('foodSearchInput').value=''; renderNutrition();}
-function addFoodRow(data={}){const wrap=document.getElementById("foodRows"); if(!wrap)return; const div=document.createElement("div"); div.className="food-row"; const id="food_"+Date.now()+"_"+Math.floor(Math.random()*9999); div.innerHTML=`<div class="grid"><input class="food-name" list="foodSuggestions" placeholder="Aliment" value="${data.name||data.matched||""}" onblur="autoFillFoodRow(this)"><input class="food-grams" type="number" placeholder="g" value="${data.grams||""}" oninput="renderNutrition()"><input class="food-kcal" type="number" placeholder="kcal/100g" value="${data.kcal??""}" oninput="renderNutrition()"><input class="food-prot" type="number" placeholder="P/100g" value="${data.p??""}" oninput="renderNutrition()"><input class="food-carb" type="number" placeholder="G/100g" value="${data.g??""}" oninput="renderNutrition()"><input class="food-fat" type="number" placeholder="L/100g" value="${data.l??""}" oninput="renderNutrition()"></div><div class="grid"><input class="food-ig" type="number" placeholder="IG" value="${data.ig??""}" oninput="renderNutrition()"><button class="secondary" type="button" onclick="fillFoodFromDb(this)">Auto base</button><button class="danger" type="button" onclick="this.closest('.food-row').remove();renderNutrition()">Supprimer</button></div><div class="small food-match-info" id="${id}">${data.matched?`Trouvé : ${data.matched}`:""}</div>`; wrap.appendChild(div); renderNutrition()}
+function populateFoodSuggestions(){const dl=document.getElementById('foodSuggestions'); if(dl&&!dl.__filled){dl.innerHTML=foodEntries().map(k=>`<option value="${k}"></option>`).join(''); dl.__filled=true;} const info=document.getElementById('foodDatabaseInfo'); if(info)info.innerHTML=`Base locale : <strong>${foodEntries().length}</strong> aliments + recherche en ligne Open Food Facts + mémoire IG : <strong>${Object.keys(loadGICache()).length}</strong> valeur(s) mémorisée(s).`;}
+function addFoodFromSearch(){const name=document.getElementById('foodSearchInput')?.value||''; const grams=+document.getElementById('foodSearchGrams')?.value||100; if(!name.trim())return alert('Tape un aliment à ajouter.'); const f=matchFood(name); if(!f.matched)return alert('Aliment non trouvé dans la base locale. Clique sur “Chercher en ligne” pour interroger Open Food Facts.'); addFoodRow({name:f.matched,grams,...f}); document.getElementById('foodSearchInput').value=''; renderNutrition();}
+function addFoodRow(data={}){const wrap=document.getElementById("foodRows"); if(!wrap)return; const div=document.createElement("div"); div.className="food-row"; const id="food_"+Date.now()+"_"+Math.floor(Math.random()*9999); div.innerHTML=`<div class="grid"><input class="food-name" list="foodSuggestions" placeholder="Aliment" value="${data.name||data.matched||""}" onblur="autoFillFoodRow(this)"><input class="food-grams" type="number" placeholder="g" value="${data.grams||""}" oninput="renderNutrition()"><input class="food-kcal" type="number" placeholder="kcal/100g" value="${data.kcal??""}" oninput="renderNutrition()"><input class="food-prot" type="number" placeholder="P/100g" value="${data.p??""}" oninput="renderNutrition()"><input class="food-carb" type="number" placeholder="G/100g" value="${data.g??""}" oninput="renderNutrition()"><input class="food-fat" type="number" placeholder="L/100g" value="${data.l??""}" oninput="renderNutrition()"></div><div class="grid"><input class="food-ig" type="number" placeholder="IG" value="${data.ig??""}" oninput="renderNutrition()"><button class="secondary" type="button" onclick="fillFoodFromDb(this)">Auto base</button><button class="secondary" type="button" onclick="fillFoodRowOnline(this)">🌐 Internet</button><button class="secondary" type="button" onclick="rememberGIFromRow(this)">🧠 Mémoriser IG</button><button class="danger" type="button" onclick="this.closest('.food-row').remove();renderNutrition()">Supprimer</button></div><div class="small food-match-info" id="${id}">${data.matched?`Trouvé : ${data.matched}${data.giSource?" · IG "+data.giSource:""}`:""}</div>`; wrap.appendChild(div); renderNutrition()}
 function autoFillFoodRow(input){const row=input.closest('.food-row'); if(!row)return; const kcal=row.querySelector('.food-kcal').value; if(kcal)return; fillFoodFromDb(row.querySelector('button.secondary'), false)}
-function fillFoodFromDb(btn,showAlert=true){const row=btn.closest('.food-row'), name=row.querySelector('.food-name').value, f=matchFood(name), info=row.querySelector('.food-match-info'); if(!f.matched){if(info)info.textContent='Non trouvé dans la base : valeurs à compléter manuellement.'; if(showAlert)alert('Aliment non trouvé dans la base. Tu peux compléter les valeurs à la main.'); return;} row.querySelector('.food-name').value=f.matched; row.querySelector('.food-kcal').value=f.kcal||""; row.querySelector('.food-prot').value=f.p||""; row.querySelector('.food-carb').value=f.g||""; row.querySelector('.food-fat').value=f.l||""; row.querySelector('.food-ig').value=f.ig||""; if(info)info.textContent='Trouvé dans la base : '+f.matched; renderNutrition()}
+function fillFoodFromDb(btn,showAlert=true){const row=btn.closest('.food-row'), name=row.querySelector('.food-name').value, f=matchFood(name), info=row.querySelector('.food-match-info'); if(!f.matched){if(info)info.textContent='Non trouvé dans la base : valeurs à compléter manuellement.'; if(showAlert)alert('Aliment non trouvé dans la base. Tu peux compléter les valeurs à la main.'); return;} row.querySelector('.food-name').value=f.matched; row.querySelector('.food-kcal').value=f.kcal||""; row.querySelector('.food-prot').value=f.p||""; row.querySelector('.food-carb').value=f.g||""; row.querySelector('.food-fat').value=f.l||""; row.querySelector('.food-ig').value=f.ig||""; if(info)info.textContent='Trouvé dans la base : '+f.matched+(getRememberedGI(name)?' · IG repris de ta mémoire':''); renderNutrition()}
 function getFoodDraft(){return [...document.querySelectorAll('.food-row')].map(row=>({name:row.querySelector('.food-name').value.trim(),grams:+row.querySelector('.food-grams').value||0,kcal:+row.querySelector('.food-kcal').value||0,p:+row.querySelector('.food-prot').value||0,g:+row.querySelector('.food-carb').value||0,l:+row.querySelector('.food-fat').value||0,ig:+row.querySelector('.food-ig').value||0})).filter(x=>x.name&&x.grams>0)}
 function computeMealTotals(items){return items.reduce((sum,x)=>{const coef=x.grams/100,carbs=x.g*coef; sum.kcal+=x.kcal*coef; sum.p+=x.p*coef; sum.g+=carbs; sum.l+=x.l*coef; sum.cg+=(x.ig||0)*carbs/100; return sum},{kcal:0,p:0,g:0,l:0,cg:0})}
+
+function applyRememberedOrEstimatedGI(item, categories=""){
+  const memo=getRememberedGI(item.name||item.matched||"");
+  if(memo){item.ig=memo.ig; item.giSource="mémoire"; return item;}
+  item.ig=estimateIGForOnlineFood(item.name||item.matched||"", item.g??0, categories);
+  item.giSource="estimé";
+  return item;
+}
+function rememberGIFromRow(btn){const row=btn.closest('.food-row'); if(!row)return; const name=row.querySelector('.food-name').value.trim(); const ig=+row.querySelector('.food-ig').value||0; if(!name)return alert('Nom aliment manquant.'); rememberGI(name,ig,'validé par Loïc'); const info=row.querySelector('.food-match-info'); if(info)info.textContent='IG mémorisé pour les prochaines fois : '+ig; renderNutrition(); alert('IG mémorisé pour : '+name);}
+function showGICache(){const box=document.getElementById('giMemoryBox'); if(!box)return; const entries=Object.values(loadGICache()).sort((a,b)=>String(a.name).localeCompare(String(b.name),'fr')); if(!entries.length){box.innerHTML='<div class="history-item">Aucune valeur IG mémorisée pour le moment.</div>'; return;} box.innerHTML=entries.map(e=>`<div class="history-item"><strong>${e.name}</strong><br>IG mémorisé : ${e.ig}<br><span class="small">Source : ${e.source||'-'} · ${e.date||''}</span></div>`).join('');}
+function estimateIGForOnlineFood(name, carbs, categories=""){
+  const txt=normalizeFoodText((name||"")+" "+(categories||""));
+  const c=Number(carbs||0);
+  if(c<=1) return 0;
+  if(txt.includes('jerky')||txt.includes('viande')||txt.includes('beef')||txt.includes('poulet')||txt.includes('thon')||txt.includes('saumon')) return 10;
+  if(txt.includes('yaourt')||txt.includes('skyr')||txt.includes('fromage blanc')||txt.includes('lait')) return 30;
+  if(txt.includes('avoine')||txt.includes('oat')||txt.includes('lentille')||txt.includes('pois chiche')) return 40;
+  if(txt.includes('complet')||txt.includes('whole')||txt.includes('basmati')) return 50;
+  if(txt.includes('riz')||txt.includes('bread')||txt.includes('pain')||txt.includes('cereal')||txt.includes('céréale')||txt.includes('pate')||txt.includes('pâtes')) return 60;
+  if(txt.includes('sucre')||txt.includes('bonbon')||txt.includes('biscuit')||txt.includes('cookie')||txt.includes('miel')) return 65;
+  return 50;
+}
+function productToFoodItem(product, query=""){
+  const n=product?.nutriments||{};
+  function pick(...keys){for(const k of keys){const v=Number(n[k]); if(Number.isFinite(v)) return v;} return 0;}
+  const kcal=pick('energy-kcal_100g','energy-kcal','energy-kcal_value','energy_100g') || (pick('energy_100g')/4.184);
+  const p=pick('proteins_100g','proteins');
+  const g=pick('carbohydrates_100g','carbohydrates');
+  const l=pick('fat_100g','fat');
+  const name=(product?.product_name||product?.generic_name||query||'aliment').trim();
+  const brands=product?.brands?` · ${product.brands}`:'';
+  const categories=Array.isArray(product?.categories_tags)?product.categories_tags.join(' '):(product?.categories||'');
+  return applyRememberedOrEstimatedGI({name:(name+brands).slice(0,80),kcal:Math.round(kcal||0),p:+p.toFixed(1),g:+g.toFixed(1),l:+l.toFixed(1),matched:name,source:'Open Food Facts'},categories);
+}
+async function searchOpenFoodFacts(query){
+  const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(query)+'&search_simple=1&action=process&json=1&page_size=6&fields=product_name,generic_name,brands,nutriments,categories,categories_tags,code';
+  const res=await fetch(url,{headers:{'Accept':'application/json'}});
+  if(!res.ok) throw new Error('Open Food Facts indisponible');
+  const data=await res.json();
+  return (data.products||[]).map(p=>productToFoodItem(p,query)).filter(x=>x.kcal||x.p||x.g||x.l).slice(0,5);
+}
+async function searchFoodOnlineFromSearch(){
+  const input=document.getElementById('foodSearchInput'), grams=+document.getElementById('foodSearchGrams')?.value||100, box=document.getElementById('onlineFoodResults');
+  const query=(input?.value||'').trim();
+  if(!query)return alert('Tape un aliment ou un produit à chercher en ligne.');
+  if(box)box.innerHTML='<div class="history-item">Recherche en ligne...</div>';
+  try{
+    const items=await searchOpenFoodFacts(query);
+    if(!items.length){if(box)box.innerHTML='<div class="history-item">Aucun résultat nutritionnel trouvé. Essaie avec une marque ou un nom plus précis.</div>'; return;}
+    if(box)box.innerHTML=items.map((it,i)=>`<div class="history-item"><strong>${it.name}</strong><br>${it.kcal} kcal · P ${it.p}g · G ${it.g}g · L ${it.l}g /100g<br><span class="small">IG ${it.giSource||"estimé"} : ${it.ig}. Corrige-le si besoin, puis mémorise-le.</span><br><button class="primary mini-btn" type="button" onclick="addOnlineFoodResult(${i},${grams})">Ajouter ce résultat</button></div>`).join('');
+    window.__onlineFoodResults=items;
+  }catch(err){
+    if(box)box.innerHTML='<div class="history-item">Recherche impossible : '+err.message+'</div>';
+  }
+}
+function addOnlineFoodResult(index,grams=100){
+  const it=(window.__onlineFoodResults||[])[index];
+  if(!it)return;
+  addFoodRow({...it,grams});
+  const input=document.getElementById('foodSearchInput'); if(input)input.value='';
+  const box=document.getElementById('onlineFoodResults'); if(box)box.innerHTML='';
+}
+async function fillFoodRowOnline(btn){
+  const row=btn.closest('.food-row'), info=row.querySelector('.food-match-info'), name=row.querySelector('.food-name').value.trim();
+  if(!name)return alert('Tape un nom d’aliment dans la ligne.');
+  if(info)info.textContent='Recherche Open Food Facts...';
+  try{
+    const results=await searchOpenFoodFacts(name);
+    if(!results.length){if(info)info.textContent='Aucun résultat trouvé en ligne.'; return;}
+    const f=results[0];
+    row.querySelector('.food-name').value=f.name;
+    row.querySelector('.food-kcal').value=f.kcal||'';
+    row.querySelector('.food-prot').value=f.p||'';
+    row.querySelector('.food-carb').value=f.g||'';
+    row.querySelector('.food-fat').value=f.l||'';
+    row.querySelector('.food-ig').value=f.ig||'';
+    if(info)info.textContent='Trouvé en ligne : '+f.name+' · IG '+(f.giSource||'estimé')+' à valider';
+    renderNutrition();
+  }catch(err){
+    if(info)info.textContent='Recherche impossible : '+err.message;
+  }
+}
+
 function saveNutritionTargets(){const d={calories:+nutriTargetCalories.value||0,proteines:+nutriTargetProteines.value||0,glucides:+nutriTargetGlucides.value||0,lipides:+nutriTargetLipides.value||0}; saveNutritionTargetsData(d); renderNutrition(); alert('Objectifs nutrition enregistrés')}
-function saveNutritionMeal(){const items=getFoodDraft(); if(!items.length)return alert('Ajoute au moins un aliment.'); const meals=loadNutritionMeals(); meals.push({id:Date.now(),date:new Date().toISOString().slice(0,10),items,totals:computeMealTotals(items)}); saveNutritionMealsData(meals); clearNutritionMealDraft(false); renderNutrition(); alert('Repas enregistré')}
+function saveNutritionMeal(){const items=getFoodDraft(); if(!items.length)return alert('Ajoute au moins un aliment.'); items.forEach(i=>rememberGI(i.name,i.ig,'repas enregistré')); const meals=loadNutritionMeals(); meals.push({id:Date.now(),date:new Date().toISOString().slice(0,10),items,totals:computeMealTotals(items)}); saveNutritionMealsData(meals); clearNutritionMealDraft(false); renderNutrition(); alert('Repas enregistré')}
 function clearNutritionMealDraft(ask=true){if(ask&&!confirm('Vider le repas en cours ?'))return; const r=document.getElementById('foodRows'); if(r)r.innerHTML=''; const b=document.getElementById('mealPhotoBox'); if(b)b.innerHTML=''; renderNutrition()}
 function analyseMealPhotoDemo(){const rows=document.getElementById('foodRows'); if(!rows)return; rows.innerHTML=''; [{name:'riz blanc cuit',grams:180},{name:'poulet',grams:160},{name:'brocoli',grams:120},{name:"huile d'olive",grams:10}].forEach(x=>{const f=matchFood(x.name); addFoodRow({...x,...f})}); renderNutrition(); alert('Analyse démo ajoutée. Pour une vraie photo, vérifie toujours les aliments/grammes. La reconnaissance IA réelle sera la prochaine étape.')}
 function handleMealPhoto(file){if(!file)return; const box=document.getElementById('mealPhotoBox'); const url=URL.createObjectURL(file); box.innerHTML=`<img class="nutri-photo-preview" src="${url}" alt="Photo du repas"><p class="small">Photo prête. Clique sur “Analyser la photo”.</p>`}
@@ -566,10 +660,10 @@ function setupNutritionPhotoInputs(){['mealCameraInput','mealGalleryInput'].forE
 function renderNutrition(){setupNutritionPhotoInputs(); populateFoodSuggestions(); const t=loadNutritionTargets(); ['nutriTargetCalories','nutriTargetProteines','nutriTargetGlucides','nutriTargetLipides'].forEach(id=>{const el=document.getElementById(id); if(el&&!el.value){const k=id.replace('nutriTarget','').toLowerCase(); el.value=t[k]||''}}); const today=new Date().toISOString().slice(0,10), meals=loadNutritionMeals().filter(m=>m.date===today), draft=getFoodDraft(), draftTotals=computeMealTotals(draft), dayTotals=meals.reduce((s,m)=>{s.kcal+=m.totals?.kcal||0;s.p+=m.totals?.p||0;s.g+=m.totals?.g||0;s.l+=m.totals?.l||0;s.cg+=m.totals?.cg||0;return s},{kcal:0,p:0,g:0,l:0,cg:0}); const box=document.getElementById('nutritionBox'); if(box)box.innerHTML=`<strong>Aujourd'hui</strong><br>Repas enregistrés : ${meals.length}<br>Calories : ${Math.round(dayTotals.kcal)} / ${t.calories||'-'} kcal<br>Protéines : ${Math.round(dayTotals.p)} / ${t.proteines||'-'} g<br>Glucides : ${Math.round(dayTotals.g)} / ${t.glucides||'-'} g<br>Lipides : ${Math.round(dayTotals.l)} / ${t.lipides||'-'} g<br>Charge glycémique : ${Math.round(dayTotals.cg)}<br><br><strong>Repas en cours</strong><br>Calories : ${Math.round(draftTotals.kcal)} kcal · P ${Math.round(draftTotals.p)} g · G ${Math.round(draftTotals.g)} g · L ${Math.round(draftTotals.l)} g · CG ${Math.round(draftTotals.cg)}`; const hist=document.getElementById('nutritionHistory'); if(hist)hist.innerHTML=loadNutritionMeals().slice(-5).reverse().map(m=>`<div class="history-item"><strong>${formatDateFR(m.date)}</strong><br>${(m.items||[]).map(i=>`• ${i.name} ${i.grams}g`).join('<br>')}<div class="phrase">${Math.round(m.totals?.kcal||0)} kcal · CG ${Math.round(m.totals?.cg||0)}</div></div>`).join('')||'<div class="small">Aucun repas enregistré.</div>'}
 
 function renderAll(){hydrateAthlete();renderSummary();renderForme();renderPerformance();renderRecovery();renderInjuryRisk();renderFatigueDetails();renderRacePrediction();renderHRV();renderWeightChart();renderTodayRecommendation();renderRacePlan();renderWeeklyPlan();renderBikeCoach();renderCharts();renderDailyHRVHistory();renderHistory();renderNutrition()}
-function exportData(){const payload={sessions:load(),athlete:loadAthlete(),hrvDaily:loadDailyHRV(),race:loadRace(),weightHistory:loadWeightHistory(),nutritionTargets:loadNutritionTargets(),nutritionMeals:loadNutritionMeals()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a"); a.href=URL.createObjectURL(blob);a.download="v11_04_backup_sport_nutrition.json";a.click();URL.revokeObjectURL(a.href)}
+function exportData(){const payload={sessions:load(),athlete:loadAthlete(),hrvDaily:loadDailyHRV(),race:loadRace(),weightHistory:loadWeightHistory(),nutritionTargets:loadNutritionTargets(),nutritionMeals:loadNutritionMeals(),giCache:loadGICache()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a"); a.href=URL.createObjectURL(blob);a.download="v11_06_backup_sport_nutrition_gi.json";a.click();URL.revokeObjectURL(a.href)}
 function clearData(){if(confirm("Supprimer toutes les données locales ?")){localStorage.removeItem(KEY);localStorage.removeItem(HRV_KEY);localStorage.removeItem(RACE_KEY);localStorage.removeItem(WEIGHT_KEY);renderAll()}}
 document.getElementById("file")?.addEventListener("change",function(e){const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(){try{const p=JSON.parse(r.result),sessions=Array.isArray(p)?p:(p.sessions||p.data||p.seances||[]); if(!confirm("Remplacer les données actuelles ?"))return; saveData(sessions.map(normalizeSession).filter(Boolean)); if(p.athlete)saveAthleteData(p.athlete); if(Array.isArray(p.hrvDaily))saveDailyHRVData(p.hrvDaily); if(Array.isArray(p.weightHistory))saveWeightHistory(p.weightHistory); if(p.race)saveRaceData(p.race); alert("Import réussi"); renderAll()}catch(err){alert("Erreur import JSON")} e.target.value=""}; r.readAsText(f)});
-window.saveAthlete=saveAthlete;window.editSession=editSession;window.deleteSession=deleteSession;window.addExo=addExo;window.saveSession=saveSession;window.saveNutritionTargets=saveNutritionTargets;window.addFoodRow=addFoodRow;window.addFoodFromSearch=addFoodFromSearch;window.fillFoodFromDb=fillFoodFromDb;window.saveNutritionMeal=saveNutritionMeal;window.clearNutritionMealDraft=clearNutritionMealDraft;window.analyseMealPhotoDemo=analyseMealPhotoDemo;window.exportData=exportData;window.clearData=clearData;window.saveDailyHRV=saveDailyHRV;window.deleteTodayHRV=deleteTodayHRV;window.toggleHRVHistory=toggleHRVHistory;window.toggleHistory=toggleHistory;window.toggleWeeklyPlan=toggleWeeklyPlan;window.saveRace=saveRace;window.deleteRace=deleteRace;window.renderAll=renderAll;
+window.saveAthlete=saveAthlete;window.editSession=editSession;window.deleteSession=deleteSession;window.addExo=addExo;window.saveSession=saveSession;window.saveNutritionTargets=saveNutritionTargets;window.searchFoodOnlineFromSearch=searchFoodOnlineFromSearch;window.rememberGIFromRow=rememberGIFromRow;window.showGICache=showGICache;window.addOnlineFoodResult=addOnlineFoodResult;window.fillFoodRowOnline=fillFoodRowOnline;window.addFoodRow=addFoodRow;window.addFoodFromSearch=addFoodFromSearch;window.fillFoodFromDb=fillFoodFromDb;window.saveNutritionMeal=saveNutritionMeal;window.clearNutritionMealDraft=clearNutritionMealDraft;window.analyseMealPhotoDemo=analyseMealPhotoDemo;window.exportData=exportData;window.clearData=clearData;window.saveDailyHRV=saveDailyHRV;window.deleteTodayHRV=deleteTodayHRV;window.toggleHRVHistory=toggleHRVHistory;window.toggleHistory=toggleHistory;window.toggleWeeklyPlan=toggleWeeklyPlan;window.saveRace=saveRace;window.deleteRace=deleteRace;window.renderAll=renderAll;
 migrateLegacyData();setupForm();hydrateAthlete();renderAll();
 </script>
 </body>
