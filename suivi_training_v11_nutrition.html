@@ -11,12 +11,12 @@
 <style>
 :root{--bg:#020617;--bg2:#071122;--card:#0f172a;--card2:#111827;--soft:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--green:#22c55e;--orange:#f59e0b;--red:#ef4444;--blue:#38bdf8;--purple:#a855f7;--gray:#64748b}*{box-sizing:border-box}body{margin:0;padding:10px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);color:var(--text)}.container{max-width:1180px;margin:0 auto}h1,h2,h3{margin:0 0 10px 0}.title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.version-badge{background:linear-gradient(135deg,#38bdf8,#6366f1);color:#020617;font-size:12px;padding:5px 10px;border-radius:999px;font-weight:800;letter-spacing:.5px;box-shadow:0 0 0 rgba(56,189,248,.7);animation:pulseGlow 2s infinite}@keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(56,189,248,.6)}70%{box-shadow:0 0 0 8px rgba(56,189,248,0)}100%{box-shadow:0 0 0 0 rgba(56,189,248,0)}}.small{font-size:13px;color:var(--muted);line-height:1.45}.card{background:rgba(15,23,42,.96);border:1px solid rgba(51,65,85,.65);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 8px 30px rgba(0,0,0,.25)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}input,select,textarea,button{width:100%;border:none;outline:none;border-radius:12px;padding:12px;font-size:16px;margin-top:8px}input,select,textarea{background:#e5eef8;color:#0f172a}textarea{min-height:80px;resize:vertical}button{cursor:pointer;font-weight:700}.primary{background:var(--green);color:#04130a}.secondary{background:var(--soft);color:#fff}.danger{background:var(--red);color:#fff}.exercise{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:12px;margin-top:10px}.stat{background:var(--soft);border-radius:12px;padding:10px;margin-top:8px;min-height:72px}.history-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:8px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700;margin-right:6px}.tag-cardio{background:var(--blue);color:#03111b}.tag-power{background:var(--orange);color:#1b1203}.tag-endurance{background:#10b981;color:#052e26}.tag-tempo{background:var(--orange);color:#1b1203}.tag-intensite{background:var(--red);color:white}.tag-muscu{background:#475569;color:white}.tag-recup{background:#60a5fa;color:#0b1220}.tag-seuil{background:#fb923c;color:#311400}.tag-judo{background:#7c3aed;color:#fff}.hidden{display:none!important}.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.summary-box{background:var(--soft);border-radius:12px;padding:12px}.summary-box strong{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}.summary-box span{font-size:22px;font-weight:800}.phrase{margin-top:6px;color:#cbd5e1;font-size:14px;line-height:1.4}.forme-good{border-left:4px solid var(--green)}.forme-mid{border-left:4px solid var(--orange)}.forme-high{border-left:4px solid var(--red)}.chart-wrap{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:10px;margin-top:8px}.zone-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:10px}.zone-box{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px}.zone-box strong{display:block;margin-bottom:6px;font-size:13px;color:var(--muted)}.zone-box span{font-size:22px;font-weight:800}.list{display:flex;flex-direction:column;gap:8px;margin-top:8px}.mini-btn{width:auto;padding:8px 12px;margin-top:8px;font-size:14px}.inline-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.inline-btn-row button{width:auto;margin-top:0}.dashboard-section{margin-bottom:14px}.card h2{font-size:18px;margin-bottom:6px}canvas{width:100%;height:220px;display:block;background:transparent}@media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}@media(max-width:700px){body{padding:8px}}
 
-.nutrition-preview{max-width:100%;max-height:260px;border-radius:14px;border:1px solid var(--border);margin-top:10px;display:block}.meal-row{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:10px;margin-top:10px}.meal-row .grid{grid-template-columns:2fr repeat(2,1fr) auto}.gly-low{color:var(--green);font-weight:800}.gly-mid{color:var(--orange);font-weight:800}.gly-high{color:var(--red);font-weight:800}.version-badge{background:linear-gradient(135deg,#fb923c,#ef4444)!important;color:#111827!important}
+.nutri-photo-preview{max-width:100%;max-height:260px;border-radius:14px;border:1px solid var(--border);margin-top:10px;display:block}.food-row{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px;margin-top:8px}.food-row .grid{grid-template-columns:2fr repeat(5,1fr)}@media(max-width:700px){.food-row .grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="title-row"><h1 style="margin:0;">Suivi Training</h1><span id="appVersion" class="version-badge">✅ V11.0.2 AUTH FINAL</span></div>
+<div class="title-row"><h1 style="margin:0;">Suivi Training</h1><span id="appVersion" class="version-badge">SYNC OK</span></div>
 <div class="card"><h2>Compte cloud</h2><p class="small">Connecte-toi avec le même compte sur ton Mac et ton iPhone.</p><div class="grid"><input id="authEmail" type="email" placeholder="Email"><input id="authPassword" type="password" placeholder="Mot de passe"></div><div class="actions"><button class="primary" type="button" onclick="signUp()">Créer un compte</button><button class="secondary" type="button" onclick="signIn()">Se connecter</button><button class="danger" type="button" onclick="logout()">Se déconnecter</button><button class="secondary" type="button" onclick="document.getElementById('cloudImportFile').click()">Importer ma sauvegarde vers le cloud</button><button class="primary" type="button" onclick="loadCloudToApp()">Charger mes données cloud</button></div><input type="file" id="cloudImportFile" style="display:none" accept=".json,application/json"><div id="authStatus" class="stat">Non connecté.</div></div>
 <div class="card"><h2>Athlète</h2><p class="small">Informations de référence pour tes analyses.</p><div class="grid"><input id="athleteNom" type="text" placeholder="Nom du sportif"><input id="vo2" type="number" step="0.1" placeholder="VO2 max"><input id="ftp" type="number" step="1" placeholder="FTP vélo"><input id="pma" type="number" step="1" placeholder="PMA vélo"><input id="rowPma" type="number" step="1" placeholder="PMA rameur"><input id="fcmax" type="number" step="1" placeholder="FC max"><input id="poids" type="number" step="0.1" placeholder="Poids"><input id="mg" type="number" step="0.1" placeholder="% masse grasse"></div><div class="actions"><button class="primary" type="button" onclick="saveAthlete()">Sauvegarder l’athlète</button></div></div>
 <div class="card"><h2>Nouvelle séance</h2><div class="grid"><div><label class="small">Date</label><input type="date" id="date"></div><div><label class="small">Sport</label><select id="sport"><option value="">Choisir un sport</option><option>Musculation</option><option>Vélo</option><option>Rameur</option><option>Ski Erg</option><option>Course</option><option>Natation</option><option>Judo (technique)</option><option>Judo (intense)</option><option>Marche</option></select></div></div><div id="muscuSection" class="hidden"><button class="secondary" type="button" onclick="addExo()">+ Ajouter un exercice</button><div id="exos"></div></div><div id="fields" class="hidden"><div class="grid"><input id="duree" class="hidden" type="text" placeholder="Durée HH:MM:SS (ex : 01:15:30)"><input id="distance" class="hidden" type="number" step="0.01" placeholder="Distance"><input id="watts" class="hidden" type="number" placeholder="Watts moyen"><input id="rpm" class="hidden" type="number" placeholder="RPM / cadence"><input id="bpm" class="hidden" type="number" placeholder="BPM moyen"><input id="allure" class="hidden" type="text" placeholder="Allure min/km (ex: 5:15)"><input id="vitesse" class="hidden" type="number" step="0.01" placeholder="Vitesse moyenne (auto)"><input id="swolf" class="hidden" type="number" placeholder="SWOLF"><input id="rpe" class="hidden" type="number" min="1" max="5" placeholder="RPE 1-5"></div><div id="courseInfo" class="small hidden"></div></div><textarea id="notes" placeholder="Notes"></textarea><div class="actions">
@@ -26,8 +26,58 @@
   <button class="danger" type="button" onclick="clearData()">Tout supprimer</button>
 </div><input type="file" id="file" style="display:none" accept=".json,application/json"></div>
 <div class="card"><h2>Résumé</h2><div class="summary-grid"><div class="summary-box"><strong>Nom</strong><span id="resumeNom">-</span></div><div class="summary-box"><strong>Nombre de séances</strong><span id="resumeCount">0</span></div><div class="summary-box"><strong>Dernière séance</strong><span id="resumeLast" style="font-size:15px;">-</span></div><div class="summary-box"><strong>Charge 7 jours</strong><span id="resumeLoad7">0</span></div></div></div>
-<div class="card" id="nutritionModule"><h2>Nutrition V11 — photo, macros & charge glycémique</h2><p class="small">Module ajouté sans toucher à tes données sport V10. Les données nutrition utilisent des clés séparées <strong>v11_nutrition_...</strong>.</p><h3>Objectifs du jour</h3><div class="grid"><select id="nutriDayType"><option value="repos">Repos</option><option value="muscu">Musculation</option><option value="judo">Judo</option><option value="velo">Vélo</option><option value="course">Course</option><option value="competition">Compétition</option></select><input id="nutriCalories" type="number" placeholder="Calories kcal"><input id="nutriProteines" type="number" placeholder="Protéines g"><input id="nutriGlucides" type="number" placeholder="Glucides g"><input id="nutriLipides" type="number" placeholder="Lipides g"><input id="nutriChargeCible" type="number" placeholder="Charge glycémique cible"></div><div class="actions"><button class="primary" type="button" onclick="autoNutritionTargets()">Calculer selon mon profil</button><button class="secondary" type="button" onclick="saveNutritionTargets()">Sauvegarder objectifs</button></div><div id="nutritionTargetsBox" class="stat">Aucun objectif nutrition enregistré.</div><h3 style="margin-top:16px;">Photo du repas</h3><p class="small">Sur iPhone, le bouton photo ouvre l’appareil photo. L’analyse est une V1 locale/simulée : elle pré-remplit les aliments, puis tu valides les quantités.</p><input id="mealPhotoCamera" type="file" accept="image/*" capture="environment" style="display:none"><input id="mealPhotoGallery" type="file" accept="image/*" style="display:none"><div class="actions"><button class="primary" type="button" onclick="openMealCamera()">📷 Prendre une photo maintenant</button><button class="secondary" type="button" onclick="openMealGallery()">Importer depuis la galerie</button><button class="danger" type="button" onclick="clearMealPhoto()">Retirer la photo</button></div><img id="mealPhotoPreview" class="nutrition-preview hidden" alt="Aperçu du repas"><div class="actions"><button class="primary" type="button" onclick="analyzeMealPhoto()">🤖 Analyser la photo</button><button class="secondary" type="button" onclick="addMealFoodRow()">+ Ajouter un aliment</button></div><div id="mealFoods"></div><div class="actions"><button class="primary" type="button" onclick="saveMealFromRows()">Calculer et enregistrer le repas</button><button class="secondary" type="button" onclick="clearMealRows()">Vider le repas</button></div><div id="mealCalcBox" class="stat">Aucun repas calculé.</div><h3 style="margin-top:16px;">Journal nutrition</h3><div id="nutritionHistory" class="list"></div></div>
 
+<div class="card" id="nutritionModule">
+  <h2>Nutrition V11.04 — Base aliments & charge glycémique</h2>
+  <p class="small">Module ajouté sans modifier tes données sport. Base aliments enrichie : protéines, calories, macros, IG et charge glycémique.</p>
+
+  <div class="grid">
+    <input id="nutriTargetCalories" type="number" placeholder="Objectif calories du jour">
+    <input id="nutriTargetProteines" type="number" placeholder="Objectif protéines g">
+    <input id="nutriTargetGlucides" type="number" placeholder="Objectif glucides g">
+    <input id="nutriTargetLipides" type="number" placeholder="Objectif lipides g">
+  </div>
+
+  <div class="actions">
+    <button class="primary" type="button" onclick="saveNutritionTargets()">Sauvegarder objectifs</button>
+    <button class="secondary" type="button" onclick="document.getElementById('mealCameraInput').click()">📷 Prendre une photo</button>
+    <button class="secondary" type="button" onclick="document.getElementById('mealGalleryInput').click()">Importer une photo</button>
+  </div>
+
+  <input id="mealCameraInput" type="file" accept="image/*" capture="environment" style="display:none">
+  <input id="mealGalleryInput" type="file" accept="image/*" style="display:none">
+  <div id="mealPhotoBox"></div>
+
+  <div class="actions">
+    <button class="primary" type="button" onclick="analyseMealPhotoDemo()">🤖 Analyser la photo</button>
+    <button class="secondary" type="button" onclick="addFoodRow()">+ Ajouter un aliment</button>
+    <button class="danger" type="button" onclick="clearNutritionMealDraft()">Vider le repas</button>
+  </div>
+
+  <div class="card" style="background:rgba(17,24,39,.75);margin-top:12px;">
+    <h3>Base alimentaire V11.04</h3>
+    <p class="small">Tape un aliment puis ajoute-le. Exemple : beef jerky, riz, poulet, banane, skyr, pâtes...</p>
+    <div class="grid">
+      <input id="foodSearchInput" list="foodSuggestions" placeholder="Rechercher un aliment">
+      <input id="foodSearchGrams" type="number" placeholder="Quantité g" value="100">
+    </div>
+    <datalist id="foodSuggestions"></datalist>
+    <div class="actions">
+      <button class="primary" type="button" onclick="addFoodFromSearch()">+ Ajouter depuis la base</button>
+      <button class="secondary" type="button" onclick="addFoodRow()">+ Aliment personnalisé</button>
+    </div>
+    <div id="foodDatabaseInfo" class="small"></div>
+  </div>
+
+  <div id="foodRows"></div>
+
+  <div class="actions">
+    <button class="primary" type="button" onclick="saveNutritionMeal()">Enregistrer le repas</button>
+  </div>
+
+  <div id="nutritionBox" class="stat">Nutrition prête.</div>
+  <div id="nutritionHistory" class="list"></div>
+</div>
 <div class="dashboard-section grid-2"><div class="card"><h2>Objectif compétition</h2><input type="date" id="raceDate"><select id="raceType"><option>Triathlon</option><option>Course à pied</option><option>Judo</option></select><select id="racePriority"><option value="A">Objectif A</option><option value="B">Objectif B</option><option value="C">Objectif C</option></select><div class="actions"><button class="primary" onclick="saveRace()">Enregistrer</button><button class="danger" onclick="deleteRace()">Supprimer la compétition</button></div><div id="racePlanBox" class="stat">Aucune compétition définie.</div></div><div class="card"><h2>Séance du jour</h2><div id="todayRecoBox" class="stat">Pas assez de données pour recommander une séance.</div></div></div>
 <div class="card"><h2>Plan automatique — 7 jours</h2><div id="weeklyPlanBox" class="stat">Calcul du plan...</div><button id="weeklyPlanToggleBtn" class="secondary mini-btn hidden" type="button" onclick="toggleWeeklyPlan()">Voir plus</button></div>
 <div class="dashboard-section grid-2"><div class="card"><h2>HRV quotidienne</h2><p class="small">À renseigner idéalement le matin au réveil.</p><div class="grid"><div><label class="small">Date HRV</label><input type="date" id="hrvDate"></div><div><label class="small">HRV (ms)</label><input type="number" step="0.1" id="hrvDailyValue" placeholder="HRV du matin"></div></div><div class="actions"><button class="primary" type="button" onclick="saveDailyHRV()">Ajouter / mettre à jour</button><button class="secondary" type="button" onclick="deleteTodayHRV()">Supprimer cette date</button></div><div id="hrvDailyHistory" class="list"></div><button id="hrvToggleBtn" class="secondary mini-btn hidden" type="button" onclick="toggleHRVHistory()">Voir plus</button></div><div class="card"><h2>HRV & readiness</h2><div id="hrvBox" class="stat">Pas assez de données HRV.</div><div class="chart-wrap" style="margin-top:14px;"><div class="small">Suivi du poids</div><canvas id="chartWeight" width="520" height="220"></canvas></div></div></div>
@@ -38,52 +88,17 @@
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyCmryU6neeBQ1l-FLGAGJNylw_KP01WqBA",authDomain:"suivi-training.firebaseapp.com",projectId:"suivi-training",storageBucket:"suivi-training.firebasestorage.app",messagingSenderId:"242239418061",appId:"1:242239418061:web:72e9dcbc807fa249640384"};
 const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-setPersistence(auth, browserLocalPersistence).catch(e=>console.warn("Auth persistence:", e));
-function getAuthFields(){return {email:document.getElementById("authEmail"), password:document.getElementById("authPassword"), status:document.getElementById("authStatus")};}
-function authMsg(msg){const el=document.getElementById("authStatus"); if(el) el.innerHTML=msg;}
 function userDoc(){const user=auth.currentUser; if(!user) return null; return doc(db,"users",user.uid,"app","main");}
-async function signUp(){
-  const {email,password}=getAuthFields();
-  try{
-    authMsg("Création du compte en cours...");
-    await createUserWithEmailAndPassword(auth,email.value.trim(),password.value);
-  }catch(e){
-    authMsg("Erreur création : "+e.message);
-    alert(e.message);
-  }
-}
-async function signIn(){
-  const {email,password}=getAuthFields();
-  try{
-    authMsg("Connexion en cours...");
-    const timeout = new Promise((_, reject)=>setTimeout(()=>reject(new Error("Timeout connexion : vérifie le réseau iPhone, Safari et recharge la page.")), 15000));
-    const cred = await Promise.race([signInWithEmailAndPassword(auth,email.value.trim(),password.value), timeout]);
-
-    // IMPORTANT iPhone/Safari : on affiche la connexion immédiatement après Auth.
-    // La synchronisation Firestore continue ensuite via onAuthStateChanged/onSnapshot.
-    authMsg("Connecté : " + (cred?.user?.email || email.value.trim()) + "<br><span class='small'>Synchronisation cloud en arrière-plan...</span>");
-
-    setTimeout(()=>{
-      const u = auth.currentUser;
-      const el = document.getElementById("authStatus");
-      if(u && el && String(el.innerHTML).includes("Synchronisation cloud")){
-        el.innerHTML = "Connecté : " + u.email + "<br><span class='small'>Cloud prêt. Si tes données ne sont pas visibles, touche “Charger mes données cloud”.</span>";
-      }
-    }, 2500);
-
-  }catch(e){
-    authMsg("Erreur connexion : "+e.message);
-    alert(e.message);
-  }
-}
-async function logout(){try{authMsg("Déconnexion...");await signOut(auth)}catch(e){authMsg("Erreur déconnexion : "+e.message);alert(e.message)}}
+async function signUp(){try{await createUserWithEmailAndPassword(auth,authEmail.value.trim(),authPassword.value)}catch(e){alert(e.message)}}
+async function signIn(){try{await signInWithEmailAndPassword(auth,authEmail.value.trim(),authPassword.value)}catch(e){alert(e.message)}}
+async function logout(){try{await signOut(auth)}catch(e){alert(e.message)}}
 async function saveCloudData(payload){const ref=userDoc(); if(!ref) return false; await setDoc(ref,payload,{merge:true}); return true;}
 async function loadCloudData(){const ref=userDoc(); if(!ref){alert("Tu n'es pas connecté.");return null} const snap=await getDoc(ref); if(!snap.exists()) return null; return snap.data();}
-async function importBackupToCloud(file){const text=await file.text(); const parsed=JSON.parse(text); const sessions=Array.isArray(parsed)?parsed:Array.isArray(parsed.sessions)?parsed.sessions:Array.isArray(parsed.data)?parsed.data:Array.isArray(parsed.seances)?parsed.seances:[]; const payload={sessions,athlete:parsed.athlete||{},hrvDaily:Array.isArray(parsed.hrvDaily)?parsed.hrvDaily:[],race:parsed.race||null,weightHistory:Array.isArray(parsed.weightHistory)?parsed.weightHistory:[],nutritionTargets:parsed.nutritionTargets||{},nutritionMeals:Array.isArray(parsed.nutritionMeals)?parsed.nutritionMeals:[]}; const ok=await saveCloudData(payload); if(ok) alert("Import cloud OK : "+sessions.length+" séance(s)");}
+async function importBackupToCloud(file){const text=await file.text(); const parsed=JSON.parse(text); const sessions=Array.isArray(parsed)?parsed:Array.isArray(parsed.sessions)?parsed.sessions:Array.isArray(parsed.data)?parsed.data:Array.isArray(parsed.seances)?parsed.seances:[]; const payload={sessions,athlete:parsed.athlete||{},hrvDaily:Array.isArray(parsed.hrvDaily)?parsed.hrvDaily:[],race:parsed.race||null,weightHistory:Array.isArray(parsed.weightHistory)?parsed.weightHistory:[],nutritionTargets:parsed.nutritionTargets||parsed.v11_nutrition_targets||{},nutritionMeals:Array.isArray(parsed.nutritionMeals)?parsed.nutritionMeals:[]}; const ok=await saveCloudData(payload); if(ok) alert("Import cloud OK : "+sessions.length+" séance(s)");}
 async function loadCloudToApp(){const data=await loadCloudData(); if(!data){alert("Aucune donnée cloud");return} localStorage.setItem("v90_data",JSON.stringify(data.sessions||[])); localStorage.setItem("v90_athlete",JSON.stringify(data.athlete||{})); localStorage.setItem("v90_hrv_daily",JSON.stringify(data.hrvDaily||[])); localStorage.setItem("v90_race",JSON.stringify(data.race||null)); localStorage.setItem("v90_weight_history",JSON.stringify(data.weightHistory||[])); localStorage.setItem("v11_nutrition_targets",JSON.stringify(data.nutritionTargets||{})); localStorage.setItem("v11_nutrition_meals",JSON.stringify(data.nutritionMeals||[])); if(data.updatedAt){ window.__lastLocalCloudPush = Number(data.updatedAt) || 0; } alert("Données chargées : "+((data.sessions||[]).length)+" séance(s)"); window.renderAll?.();}
 async function pushLocalToCloud(){
   try{
@@ -174,29 +189,18 @@ window.signUp=signUp; window.signIn=signIn; window.logout=logout; window.loadClo
 /* =========================================================
    CODE ORGANISÉ : CONFIG / DONNÉES / FORMULAIRES / RENDU
    ========================================================= */
-const APP_VERSION="✅ V11.0.2 AUTH FINAL"; document.getElementById("appVersion").textContent=APP_VERSION;
+const APP_VERSION="🥩 V11.04 BASE ALIMENTS"; document.getElementById("appVersion").textContent=APP_VERSION;
 const KEY="v90_data", ATHLETE_KEY="v90_athlete", HRV_KEY="v90_hrv_daily", WEIGHT_KEY="v90_weight_history", RACE_KEY="v90_race";
 const NUTRITION_TARGETS_KEY="v11_nutrition_targets", NUTRITION_MEALS_KEY="v11_nutrition_meals";
-let currentMealPhotoData="";
 const LEGACY_KEYS=["v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"], LEGACY_ATHLETE_KEYS=["v891_athlete","v89_athlete","v88_athlete","v87_athlete","v86_athlete","v85_athlete","v84_athlete","v82_athlete","v81_athlete","v8_athlete"], LEGACY_HRV_KEYS=["v891_hrv_daily","v89_hrv_daily","v88_hrv_daily","v87_hrv_daily","v86_hrv_daily"], MUSCLES=["Pecs","Biceps","Triceps","Épaules","Dos","Jambes"];
 let isHistoryExpanded=false,isHRVExpanded=false,isWeeklyPlanExpanded=false;
 let editingSessionId = null;
 function safeJson(k,f){try{return JSON.parse(localStorage.getItem(k)||f)}catch{return JSON.parse(f)}}
 function load(){const d=safeJson(KEY,"[]"); return Array.isArray(d)?d:[]} function saveData(d){localStorage.setItem(KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadAthlete(){return safeJson(ATHLETE_KEY,"{}")} function saveAthleteData(a){localStorage.setItem(ATHLETE_KEY,JSON.stringify(a)); window.pushLocalToCloud?.()} function loadDailyHRV(){const d=safeJson(HRV_KEY,"[]"); return Array.isArray(d)?d:[]} function saveDailyHRVData(d){localStorage.setItem(HRV_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadWeightHistory(){const d=safeJson(WEIGHT_KEY,"[]"); return Array.isArray(d)?d:[]} function saveWeightHistory(d){localStorage.setItem(WEIGHT_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadRace(){return safeJson(RACE_KEY,"null")} function saveRaceData(r){localStorage.setItem(RACE_KEY,JSON.stringify(r)); window.pushLocalToCloud?.()}
-function loadNutritionTargets(){return safeJson(NUTRITION_TARGETS_KEY,"{}")} function saveNutritionTargetsData(d){localStorage.setItem(NUTRITION_TARGETS_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()} function loadNutritionMeals(){const d=safeJson(NUTRITION_MEALS_KEY,"[]"); return Array.isArray(d)?d:[]} function saveNutritionMeals(d){localStorage.setItem(NUTRITION_MEALS_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()}
-const FOOD_DB=[{name:"riz blanc cuit",kcal:130,p:2.7,c:28,l:0.3,gi:70},{name:"riz basmati cuit",kcal:121,p:3.5,c:25,l:0.4,gi:50},{name:"pâtes cuites",kcal:158,p:5.8,c:31,l:0.9,gi:49},{name:"pomme de terre vapeur",kcal:80,p:1.8,c:17,l:0.1,gi:65},{name:"patate douce",kcal:86,p:1.6,c:20,l:0.1,gi:50},{name:"pain complet",kcal:247,p:9,c:41,l:4,gi:65},{name:"flocons d'avoine",kcal:389,p:17,c:66,l:7,gi:55},{name:"banane",kcal:89,p:1.1,c:23,l:0.3,gi:51},{name:"pomme",kcal:52,p:0.3,c:14,l:0.2,gi:36},{name:"poulet",kcal:165,p:31,c:0,l:3.6,gi:0},{name:"œuf",kcal:143,p:13,c:1,l:10,gi:0},{name:"saumon",kcal:208,p:20,c:0,l:13,gi:0},{name:"thon",kcal:132,p:28,c:0,l:1,gi:0},{name:"brocoli",kcal:35,p:2.4,c:7,l:0.4,gi:15},{name:"haricots verts",kcal:31,p:1.8,c:7,l:0.1,gi:15},{name:"salade",kcal:15,p:1.4,c:2.9,l:0.2,gi:15},{name:"huile d'olive",kcal:884,p:0,c:0,l:100,gi:0},{name:"yaourt grec",kcal:97,p:9,c:4,l:5,gi:35}];
-function findFood(n){const q=String(n||"").toLowerCase().trim(); return FOOD_DB.find(f=>f.name===q)||FOOD_DB.find(f=>f.name.includes(q)||q.includes(f.name))||null}
-function openMealCamera(){document.getElementById("mealPhotoCamera")?.click()} function openMealGallery(){document.getElementById("mealPhotoGallery")?.click()}
-function handleMealPhotoFile(file){if(!file)return; const r=new FileReader(); r.onload=()=>{currentMealPhotoData=r.result; const img=document.getElementById("mealPhotoPreview"); if(img){img.src=currentMealPhotoData; img.classList.remove("hidden")}}; r.readAsDataURL(file)}
-function clearMealPhoto(){currentMealPhotoData=""; const img=document.getElementById("mealPhotoPreview"); if(img){img.src=""; img.classList.add("hidden")}}
-function addMealFoodRow(data={}){const el=document.getElementById("mealFoods"); if(!el)return; const row=document.createElement("div"); row.className="meal-row"; row.innerHTML=`<div class="grid"><input class="meal-food-name" list="foodList" placeholder="Aliment" value="${data.name||""}"><input class="meal-food-grams" type="number" placeholder="Grammes" value="${data.grams||""}"><input class="meal-food-gi" type="number" placeholder="IG" value="${data.gi??""}"><button class="danger mini-btn" type="button" onclick="this.closest('.meal-row').remove();calculateMealRows(false)">X</button></div>`; el.appendChild(row); if(!document.getElementById("foodList")){const dl=document.createElement("datalist"); dl.id="foodList"; dl.innerHTML=FOOD_DB.map(f=>`<option value="${f.name}"></option>`).join(""); document.body.appendChild(dl)}}
-function clearMealRows(){const el=document.getElementById("mealFoods"); if(el)el.innerHTML=""; const box=document.getElementById("mealCalcBox"); if(box)box.innerHTML="Aucun repas calculé."}
-function analyzeMealPhoto(){clearMealRows(); [{name:"riz basmati cuit",grams:180,gi:50},{name:"poulet",grams:160,gi:0},{name:"brocoli",grams:120,gi:15},{name:"huile d'olive",grams:10,gi:0}].forEach(addMealFoodRow); const box=document.getElementById("mealCalcBox"); if(box)box.innerHTML="Photo analysée en mode V1 local : aliments proposés. Corrige les quantités puis enregistre."; calculateMealRows(false)}
-function calculateMealRows(show=true){let kcal=0,p=0,c=0,l=0,gl=0,items=[]; document.querySelectorAll(".meal-row").forEach(row=>{const name=row.querySelector(".meal-food-name")?.value||"", grams=+row.querySelector(".meal-food-grams")?.value||0; let f=findFood(name); let gi=+(row.querySelector(".meal-food-gi")?.value||0); if(f){if(!gi)gi=f.gi; kcal+=f.kcal*grams/100;p+=f.p*grams/100;c+=f.c*grams/100;l+=f.l*grams/100;gl+=gi*(f.c*grams/100)/100} items.push({name,grams,gi})}); const box=document.getElementById("mealCalcBox"); const cls=gl<10?"gly-low":gl<20?"gly-mid":"gly-high"; const impact=gl<10?"faible":gl<20?"modéré":"élevé"; if(box&&(show||items.length)){box.innerHTML=`<strong>Repas calculé</strong><br>Calories : ${Math.round(kcal)} kcal<br>Protéines : ${p.toFixed(1)} g · Glucides : ${c.toFixed(1)} g · Lipides : ${l.toFixed(1)} g<br>Charge glycémique : <span class="${cls}">${gl.toFixed(1)} (${impact})</span>`} return {kcal,p,c,l,gl,items}}
-function saveMealFromRows(){const r=calculateMealRows(true); if(!r.items.length)return alert("Ajoute au moins un aliment."); const meals=loadNutritionMeals(); meals.unshift({id:Date.now(),date:new Date().toISOString().slice(0,10),photo:currentMealPhotoData?true:false,...r}); saveNutritionMeals(meals.slice(0,200)); renderNutrition(); alert("Repas enregistré")}
-function autoNutritionTargets(){const a=loadAthlete(),poids=Number(a.poids||107),type=document.getElementById("nutriDayType")?.value||"repos"; const mult={repos:24,muscu:26,judo:28,velo:29,course:29,competition:31}[type]||26; const calories=Math.round(poids*mult),proteines=Math.round(poids*1.8),lipides=Math.round(poids*0.8),glucides=Math.round((calories-proteines*4-lipides*9)/4),chargeCible=type==="repos"?80:type==="competition"?160:120; document.getElementById("nutriCalories").value=calories; document.getElementById("nutriProteines").value=proteines; document.getElementById("nutriGlucides").value=glucides; document.getElementById("nutriLipides").value=lipides; document.getElementById("nutriChargeCible").value=chargeCible; saveNutritionTargets()}
-function saveNutritionTargets(){const d={dayType:document.getElementById("nutriDayType")?.value||"repos",calories:+document.getElementById("nutriCalories")?.value||0,proteines:+document.getElementById("nutriProteines")?.value||0,glucides:+document.getElementById("nutriGlucides")?.value||0,lipides:+document.getElementById("nutriLipides")?.value||0,chargeCible:+document.getElementById("nutriChargeCible")?.value||0}; saveNutritionTargetsData(d); renderNutrition(); alert("Objectifs nutrition enregistrés")}
-function renderNutrition(){const t=loadNutritionTargets(),box=document.getElementById("nutritionTargetsBox"); if(document.getElementById("nutriDayType"))document.getElementById("nutriDayType").value=t.dayType||"repos"; [ ["nutriCalories","calories"],["nutriProteines","proteines"],["nutriGlucides","glucides"],["nutriLipides","lipides"],["nutriChargeCible","chargeCible"] ].forEach(([id,k])=>{const el=document.getElementById(id); if(el)el.value=t[k]||""}); if(box){box.innerHTML=t.calories?`<strong>Objectifs du jour</strong><br>${t.calories} kcal · P ${t.proteines} g · G ${t.glucides} g · L ${t.lipides} g<br>Charge glycémique cible : ${t.chargeCible||"-"}`:"Aucun objectif nutrition enregistré."} const hist=document.getElementById("nutritionHistory"); if(hist){const meals=loadNutritionMeals().slice(0,8); hist.innerHTML=meals.length?meals.map(m=>`<div class="history-item"><strong>${formatDateFR(m.date)}</strong><br>${Math.round(m.kcal||0)} kcal · P ${(m.p||0).toFixed(1)} g · G ${(m.c||0).toFixed(1)} g · L ${(m.l||0).toFixed(1)} g<br>Charge glycémique : ${(m.gl||0).toFixed(1)}</div>`).join(""):"<div class='stat'>Aucun repas enregistré.</div>"}}
+function loadNutritionTargets(){return safeJson(NUTRITION_TARGETS_KEY,"{}")}
+function saveNutritionTargetsData(d){localStorage.setItem(NUTRITION_TARGETS_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()}
+function loadNutritionMeals(){const d=safeJson(NUTRITION_MEALS_KEY,"[]"); return Array.isArray(d)?d:[]}
+function saveNutritionMealsData(d){localStorage.setItem(NUTRITION_MEALS_KEY,JSON.stringify(d)); window.pushLocalToCloud?.()}
 
 function migrateLegacyData(){if(!localStorage.getItem(KEY)) for(const k of LEGACY_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(KEY,r);break}} if(!localStorage.getItem(ATHLETE_KEY)) for(const k of LEGACY_ATHLETE_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(ATHLETE_KEY,r);break}} if(!localStorage.getItem(HRV_KEY)) for(const k of LEGACY_HRV_KEYS){const r=localStorage.getItem(k); if(r){localStorage.setItem(HRV_KEY,r);break}}}
 function formatDateFR(d){if(!d)return"-"; const x=new Date(String(d).includes("T")?d:d+"T12:00:00"); if(isNaN(x))return d; return `${String(x.getDate()).padStart(2,"0")}/${String(x.getMonth()+1).padStart(2,"0")}/${x.getFullYear()}`} function shortDateFR(d){return formatDateFR(d).slice(0,5)}
@@ -292,8 +296,6 @@ function updateCoursePreview(){const sport=document.getElementById("sport")?.val
 function setupForm(){
   document.getElementById("date").value ||= new Date().toISOString().slice(0,10);
   document.getElementById("hrvDate").value ||= new Date().toISOString().slice(0,10);
-  document.getElementById("mealPhotoCamera")?.addEventListener("change",e=>handleMealPhotoFile(e.target.files?.[0]));
-  document.getElementById("mealPhotoGallery")?.addEventListener("change",e=>handleMealPhotoFile(e.target.files?.[0]));
   document.getElementById("allure")?.addEventListener("input",updateCoursePreview);
   document.getElementById("sport").onchange=function(){
     const t=this.value;
@@ -469,12 +471,105 @@ function renderWeeklyPlan(){const box=document.getElementById("weeklyPlanBox"),b
 function renderTodayRecommendation(){const box=document.getElementById("todayRecoBox"); if(!box)return; const data=load(),hrv=loadDailyHRV(); if(!data.length&&!hrv.length){box.innerHTML="Pas assez de données pour recommander une séance.";return} const todayName=new Date().toLocaleDateString("fr-FR",{weekday:"long"}),recentLoad=data.slice(-7).reduce((sum,s)=>sum+Number(s.d||s.duree||0),0); let title=todayName.charAt(0).toUpperCase()+todayName.slice(1),session="Séance prévue OK, sans surcharger",note="Adaptation physiologique",coach="Tu es dans une zone productive, mais sans excès. Reste propre.",advice="👉 Mieux vaut alléger légèrement aujourd’hui."; if(recentLoad<60){session="Reprise douce / entretien";note="Charge récente faible";coach="Tu peux bouger sans chercher à forcer.";advice="👉 Séance légère ou endurance tranquille."}else if(recentLoad>=180){session="Récupération conseillée";note="Charge récente élevée";coach="Tu as accumulé pas mal de charge récemment.";advice="👉 Repos, marche légère ou mobilité."} box.innerHTML=`<strong>${title}</strong><br>${session}<br><br><span class="small">${note}</span><br><br><strong>${coach}</strong><br><span class="small">${advice}</span>`}
 function renderForme(){document.getElementById("formeBox").innerHTML=loadRace()?.date?"Analyse compétition active":"Mode suivi (pas de compétition)"} function renderPerformance(){const p=computePerformanceModel();document.getElementById("perfBox").innerHTML=`Fitness : ${Math.round(p.ctl)}<br>Fatigue : ${Math.round(p.atl)}<br>Forme : ${Math.round(p.form)}`} function renderRecovery(){const s=computeRecoveryScore();document.getElementById("recoveryBox").innerHTML=`<strong>${s}/100</strong><br>${s>70?"🟢 bon état":s>45?"🟡 moyen":"🔴 récupération conseillée"}`} function renderFatigueDetails(){document.getElementById("fatigueBox").innerHTML="Calcul basé sur les dernières séances."} function renderRacePrediction(){document.getElementById("raceBox").innerHTML=computeRecoveryScore()>70?"🟢 Bonne forme":"🟡 À surveiller"} function renderInjuryRisk(){document.getElementById("injuryRiskBox").innerHTML=computeRecoveryScore()<45?"🟠 Allège pour éviter la surcharge":"🟢 Pas d’alerte majeure"}
 function renderBikeCoach(){const box=document.getElementById("bikeCoachBox"); if(!box)return; const data=load().map(normalizeSession).filter(Boolean),bike=data.filter(s=>s.type==="Vélo"&&Number(s.w||0)>0&&Number(s.d||0)>0).slice(-7); let z1=0,z2=0,z3=0,z4=0,z5=0; bike.forEach(s=>{const w=Number(s.w||0),d=Number(s.d||0); if(w<140)z1+=d; else if(w<175)z2+=d; else if(w<205)z3+=d; else if(w<=240)z4+=d; else z5+=d}); const total=z1+z2+z3+z4+z5; function pct(v){return total?Math.round((v/total)*100):0} const vals=[pct(z1),pct(z2),pct(z3),pct(z4),pct(z5)]; ["z1Pct","z2Pct","z3Pct","z4Pct","z5Pct"].forEach((id,i)=>{const el=document.getElementById(id); if(el)el.textContent=vals[i]+"%"}); if(!bike.length){box.innerHTML="Pas assez de données vélo.";return} let msg="🔵 Répartition vélo équilibrée."; if(vals[4]>20||vals[3]>35)msg="🔴 Beaucoup d’intensité cette semaine. Récupération à prévoir."; else if(vals[1]>=50&&vals[4]<=15)msg="🟢 Très bonne base endurance."; else if((vals[2]+vals[3])>=50)msg="🟡 Semaine soutenue. Garde une séance facile."; box.innerHTML="<strong>"+msg+"</strong><br><span class='small'>Calcul sur les "+bike.length+" dernières séances vélo.</span>"}
+
+const FOOD_DB={
+  "beef jerky":{kcal:300,p:55,g:10,l:5,ig:20,cat:"protéine"},
+  "bœuf séché":{kcal:300,p:55,g:10,l:5,ig:20,cat:"protéine"},
+  "viande des grisons":{kcal:220,p:39,g:1,l:6,ig:0,cat:"protéine"},
+  "poulet":{kcal:165,p:31,g:0,l:3.6,ig:0,cat:"protéine"},
+  "dinde":{kcal:135,p:29,g:0,l:2,ig:0,cat:"protéine"},
+  "steak haché 5%":{kcal:137,p:21,g:0,l:5,ig:0,cat:"protéine"},
+  "thon naturel":{kcal:116,p:26,g:0,l:1,ig:0,cat:"protéine"},
+  "saumon":{kcal:208,p:20,g:0,l:13,ig:0,cat:"protéine"},
+  "œuf":{kcal:145,p:13,g:1,l:10,ig:0,cat:"protéine"},
+  "skyr nature":{kcal:60,p:10,g:4,l:0.2,ig:30,cat:"laitage"},
+  "fromage blanc 0%":{kcal:48,p:8,g:4,l:0.2,ig:30,cat:"laitage"},
+  "yaourt grec":{kcal:97,p:9,g:4,l:5,ig:35,cat:"laitage"},
+  "lait demi écrémé":{kcal:47,p:3.4,g:4.8,l:1.6,ig:30,cat:"laitage"},
+  "whey":{kcal:390,p:78,g:8,l:6,ig:15,cat:"complément"},
+
+  "riz blanc cuit":{kcal:130,p:2.7,g:28,l:0.3,ig:70,cat:"glucide"},
+  "riz basmati cuit":{kcal:121,p:3.5,g:25,l:0.4,ig:50,cat:"glucide"},
+  "riz complet cuit":{kcal:111,p:2.6,g:23,l:0.9,ig:50,cat:"glucide"},
+  "pâtes cuites":{kcal:150,p:5,g:30,l:1,ig:55,cat:"glucide"},
+  "pâtes complètes cuites":{kcal:140,p:5.5,g:26,l:1.2,ig:45,cat:"glucide"},
+  "quinoa cuit":{kcal:120,p:4.4,g:21,l:1.9,ig:53,cat:"glucide"},
+  "semoule cuite":{kcal:112,p:3.8,g:23,l:0.2,ig:65,cat:"glucide"},
+  "pommes de terre vapeur":{kcal:87,p:2,g:17,l:0.1,ig:65,cat:"glucide"},
+  "patate douce cuite":{kcal:86,p:1.6,g:17,l:0.1,ig:50,cat:"glucide"},
+  "flocons d'avoine":{kcal:370,p:13,g:60,l:7,ig:55,cat:"glucide"},
+  "pain blanc":{kcal:265,p:9,g:49,l:3.2,ig:75,cat:"glucide"},
+  "pain complet":{kcal:247,p:9,g:41,l:4,ig:50,cat:"glucide"},
+  "pain de mie":{kcal:270,p:8,g:49,l:4,ig:75,cat:"glucide"},
+  "tortilla blé":{kcal:310,p:8,g:52,l:8,ig:55,cat:"glucide"},
+
+  "banane":{kcal:89,p:1.1,g:20,l:0.3,ig:52,cat:"fruit"},
+  "pomme":{kcal:52,p:0.3,g:12,l:0.2,ig:36,cat:"fruit"},
+  "orange":{kcal:47,p:0.9,g:9,l:0.1,ig:43,cat:"fruit"},
+  "fruits rouges":{kcal:50,p:1,g:8,l:0.5,ig:25,cat:"fruit"},
+  "dattes":{kcal:282,p:2.5,g:65,l:0.4,ig:70,cat:"fruit"},
+
+  "brocoli":{kcal:35,p:3,g:4,l:0.4,ig:15,cat:"légume"},
+  "haricots verts":{kcal:31,p:1.8,g:4,l:0.2,ig:15,cat:"légume"},
+  "carottes cuites":{kcal:35,p:0.8,g:6,l:0.2,ig:40,cat:"légume"},
+  "courgette":{kcal:17,p:1.2,g:2,l:0.3,ig:15,cat:"légume"},
+  "salade":{kcal:15,p:1.4,g:1.5,l:0.2,ig:10,cat:"légume"},
+  "tomate":{kcal:18,p:0.9,g:3,l:0.2,ig:15,cat:"légume"},
+
+  "lentilles cuites":{kcal:116,p:9,g:17,l:0.4,ig:30,cat:"légumineuse"},
+  "pois chiches cuits":{kcal:164,p:9,g:22,l:2.6,ig:35,cat:"légumineuse"},
+  "haricots rouges cuits":{kcal:127,p:8.7,g:16,l:0.5,ig:30,cat:"légumineuse"},
+
+  "huile d'olive":{kcal:884,p:0,g:0,l:100,ig:0,cat:"lipide"},
+  "beurre":{kcal:717,p:0.9,g:0.1,l:81,ig:0,cat:"lipide"},
+  "avocat":{kcal:160,p:2,g:2,l:15,ig:10,cat:"lipide"},
+  "amandes":{kcal:579,p:21,g:9,l:50,ig:15,cat:"lipide"},
+  "beurre de cacahuète":{kcal:588,p:25,g:14,l:50,ig:15,cat:"lipide"},
+
+  "chocolat noir 70%":{kcal:600,p:8,g:34,l:43,ig:25,cat:"plaisir"},
+  "miel":{kcal:304,p:0.3,g:82,l:0,ig:60,cat:"sucre"},
+  "confiture":{kcal:250,p:0.3,g:60,l:0,ig:65,cat:"sucre"}
+};
+const FOOD_ALIASES={
+  "jerky":"beef jerky","beef":"beef jerky","boeuf seche":"bœuf séché","bœuf seche":"bœuf séché","boeuf séché":"bœuf séché",
+  "viande grison":"viande des grisons","blanc de poulet":"poulet","escalope de poulet":"poulet","jambon de dinde":"dinde",
+  "riz":"riz blanc cuit","basmati":"riz basmati cuit","pates":"pâtes cuites","pâtes":"pâtes cuites","pate":"pâtes cuites","pomme de terre":"pommes de terre vapeur","patate douce":"patate douce cuite",
+  "avoine":"flocons d'avoine","flocon avoine":"flocons d'avoine","pain":"pain blanc","pain complet":"pain complet",
+  "fromage blanc":"fromage blanc 0%","yaourt":"yaourt grec","lait":"lait demi écrémé",
+  "thon":"thon naturel","huile olive":"huile d'olive","olive":"huile d'olive","avocats":"avocat",
+  "lentille":"lentilles cuites","pois chiche":"pois chiches cuits","haricot rouge":"haricots rouges cuits"
+};
+function normalizeFoodText(v){return String(v||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim()}
+function foodEntries(){return Object.keys(FOOD_DB).sort((a,b)=>a.localeCompare(b,'fr'))}
+function matchFood(name){
+  const raw=String(name||"").trim();
+  const norm=normalizeFoodText(raw);
+  if(!norm)return {kcal:0,p:0,g:0,l:0,ig:0,matched:""};
+  for(const key of Object.keys(FOOD_DB)){if(normalizeFoodText(key)===norm)return {...FOOD_DB[key],matched:key};}
+  for(const [alias,target] of Object.entries(FOOD_ALIASES)){if(norm===normalizeFoodText(alias)||norm.includes(normalizeFoodText(alias)))return {...FOOD_DB[target],matched:target};}
+  for(const key of Object.keys(FOOD_DB)){const kn=normalizeFoodText(key); if(kn.includes(norm)||norm.includes(kn))return {...FOOD_DB[key],matched:key};}
+  return {kcal:0,p:0,g:0,l:0,ig:0,matched:""};
+}
+function populateFoodSuggestions(){const dl=document.getElementById('foodSuggestions'); if(dl&&!dl.__filled){dl.innerHTML=foodEntries().map(k=>`<option value="${k}"></option>`).join(''); dl.__filled=true;} const info=document.getElementById('foodDatabaseInfo'); if(info)info.innerHTML=`Base locale : <strong>${foodEntries().length}</strong> aliments. Astuce : tape “beef jerky”, puis “Ajouter depuis la base”.`;}
+function addFoodFromSearch(){const name=document.getElementById('foodSearchInput')?.value||''; const grams=+document.getElementById('foodSearchGrams')?.value||100; if(!name.trim())return alert('Tape un aliment à ajouter.'); const f=matchFood(name); if(!f.matched)return alert('Aliment non trouvé dans la base. Utilise “Aliment personnalisé” ou donne-moi l’aliment à ajouter.'); addFoodRow({name:f.matched,grams,...f}); document.getElementById('foodSearchInput').value=''; renderNutrition();}
+function addFoodRow(data={}){const wrap=document.getElementById("foodRows"); if(!wrap)return; const div=document.createElement("div"); div.className="food-row"; const id="food_"+Date.now()+"_"+Math.floor(Math.random()*9999); div.innerHTML=`<div class="grid"><input class="food-name" list="foodSuggestions" placeholder="Aliment" value="${data.name||data.matched||""}" onblur="autoFillFoodRow(this)"><input class="food-grams" type="number" placeholder="g" value="${data.grams||""}" oninput="renderNutrition()"><input class="food-kcal" type="number" placeholder="kcal/100g" value="${data.kcal??""}" oninput="renderNutrition()"><input class="food-prot" type="number" placeholder="P/100g" value="${data.p??""}" oninput="renderNutrition()"><input class="food-carb" type="number" placeholder="G/100g" value="${data.g??""}" oninput="renderNutrition()"><input class="food-fat" type="number" placeholder="L/100g" value="${data.l??""}" oninput="renderNutrition()"></div><div class="grid"><input class="food-ig" type="number" placeholder="IG" value="${data.ig??""}" oninput="renderNutrition()"><button class="secondary" type="button" onclick="fillFoodFromDb(this)">Auto base</button><button class="danger" type="button" onclick="this.closest('.food-row').remove();renderNutrition()">Supprimer</button></div><div class="small food-match-info" id="${id}">${data.matched?`Trouvé : ${data.matched}`:""}</div>`; wrap.appendChild(div); renderNutrition()}
+function autoFillFoodRow(input){const row=input.closest('.food-row'); if(!row)return; const kcal=row.querySelector('.food-kcal').value; if(kcal)return; fillFoodFromDb(row.querySelector('button.secondary'), false)}
+function fillFoodFromDb(btn,showAlert=true){const row=btn.closest('.food-row'), name=row.querySelector('.food-name').value, f=matchFood(name), info=row.querySelector('.food-match-info'); if(!f.matched){if(info)info.textContent='Non trouvé dans la base : valeurs à compléter manuellement.'; if(showAlert)alert('Aliment non trouvé dans la base. Tu peux compléter les valeurs à la main.'); return;} row.querySelector('.food-name').value=f.matched; row.querySelector('.food-kcal').value=f.kcal||""; row.querySelector('.food-prot').value=f.p||""; row.querySelector('.food-carb').value=f.g||""; row.querySelector('.food-fat').value=f.l||""; row.querySelector('.food-ig').value=f.ig||""; if(info)info.textContent='Trouvé dans la base : '+f.matched; renderNutrition()}
+function getFoodDraft(){return [...document.querySelectorAll('.food-row')].map(row=>({name:row.querySelector('.food-name').value.trim(),grams:+row.querySelector('.food-grams').value||0,kcal:+row.querySelector('.food-kcal').value||0,p:+row.querySelector('.food-prot').value||0,g:+row.querySelector('.food-carb').value||0,l:+row.querySelector('.food-fat').value||0,ig:+row.querySelector('.food-ig').value||0})).filter(x=>x.name&&x.grams>0)}
+function computeMealTotals(items){return items.reduce((sum,x)=>{const coef=x.grams/100,carbs=x.g*coef; sum.kcal+=x.kcal*coef; sum.p+=x.p*coef; sum.g+=carbs; sum.l+=x.l*coef; sum.cg+=(x.ig||0)*carbs/100; return sum},{kcal:0,p:0,g:0,l:0,cg:0})}
+function saveNutritionTargets(){const d={calories:+nutriTargetCalories.value||0,proteines:+nutriTargetProteines.value||0,glucides:+nutriTargetGlucides.value||0,lipides:+nutriTargetLipides.value||0}; saveNutritionTargetsData(d); renderNutrition(); alert('Objectifs nutrition enregistrés')}
+function saveNutritionMeal(){const items=getFoodDraft(); if(!items.length)return alert('Ajoute au moins un aliment.'); const meals=loadNutritionMeals(); meals.push({id:Date.now(),date:new Date().toISOString().slice(0,10),items,totals:computeMealTotals(items)}); saveNutritionMealsData(meals); clearNutritionMealDraft(false); renderNutrition(); alert('Repas enregistré')}
+function clearNutritionMealDraft(ask=true){if(ask&&!confirm('Vider le repas en cours ?'))return; const r=document.getElementById('foodRows'); if(r)r.innerHTML=''; const b=document.getElementById('mealPhotoBox'); if(b)b.innerHTML=''; renderNutrition()}
+function analyseMealPhotoDemo(){const rows=document.getElementById('foodRows'); if(!rows)return; rows.innerHTML=''; [{name:'riz blanc cuit',grams:180},{name:'poulet',grams:160},{name:'brocoli',grams:120},{name:"huile d'olive",grams:10}].forEach(x=>{const f=matchFood(x.name); addFoodRow({...x,...f})}); renderNutrition(); alert('Analyse démo ajoutée. Pour une vraie photo, vérifie toujours les aliments/grammes. La reconnaissance IA réelle sera la prochaine étape.')}
+function handleMealPhoto(file){if(!file)return; const box=document.getElementById('mealPhotoBox'); const url=URL.createObjectURL(file); box.innerHTML=`<img class="nutri-photo-preview" src="${url}" alt="Photo du repas"><p class="small">Photo prête. Clique sur “Analyser la photo”.</p>`}
+function setupNutritionPhotoInputs(){['mealCameraInput','mealGalleryInput'].forEach(id=>{const el=document.getElementById(id); if(el&&!el.__ok){el.addEventListener('change',e=>handleMealPhoto(e.target.files&&e.target.files[0])); el.__ok=true;}})}
+function renderNutrition(){setupNutritionPhotoInputs(); populateFoodSuggestions(); const t=loadNutritionTargets(); ['nutriTargetCalories','nutriTargetProteines','nutriTargetGlucides','nutriTargetLipides'].forEach(id=>{const el=document.getElementById(id); if(el&&!el.value){const k=id.replace('nutriTarget','').toLowerCase(); el.value=t[k]||''}}); const today=new Date().toISOString().slice(0,10), meals=loadNutritionMeals().filter(m=>m.date===today), draft=getFoodDraft(), draftTotals=computeMealTotals(draft), dayTotals=meals.reduce((s,m)=>{s.kcal+=m.totals?.kcal||0;s.p+=m.totals?.p||0;s.g+=m.totals?.g||0;s.l+=m.totals?.l||0;s.cg+=m.totals?.cg||0;return s},{kcal:0,p:0,g:0,l:0,cg:0}); const box=document.getElementById('nutritionBox'); if(box)box.innerHTML=`<strong>Aujourd'hui</strong><br>Repas enregistrés : ${meals.length}<br>Calories : ${Math.round(dayTotals.kcal)} / ${t.calories||'-'} kcal<br>Protéines : ${Math.round(dayTotals.p)} / ${t.proteines||'-'} g<br>Glucides : ${Math.round(dayTotals.g)} / ${t.glucides||'-'} g<br>Lipides : ${Math.round(dayTotals.l)} / ${t.lipides||'-'} g<br>Charge glycémique : ${Math.round(dayTotals.cg)}<br><br><strong>Repas en cours</strong><br>Calories : ${Math.round(draftTotals.kcal)} kcal · P ${Math.round(draftTotals.p)} g · G ${Math.round(draftTotals.g)} g · L ${Math.round(draftTotals.l)} g · CG ${Math.round(draftTotals.cg)}`; const hist=document.getElementById('nutritionHistory'); if(hist)hist.innerHTML=loadNutritionMeals().slice(-5).reverse().map(m=>`<div class="history-item"><strong>${formatDateFR(m.date)}</strong><br>${(m.items||[]).map(i=>`• ${i.name} ${i.grams}g`).join('<br>')}<div class="phrase">${Math.round(m.totals?.kcal||0)} kcal · CG ${Math.round(m.totals?.cg||0)}</div></div>`).join('')||'<div class="small">Aucun repas enregistré.</div>'}
+
 function renderAll(){hydrateAthlete();renderSummary();renderForme();renderPerformance();renderRecovery();renderInjuryRisk();renderFatigueDetails();renderRacePrediction();renderHRV();renderWeightChart();renderTodayRecommendation();renderRacePlan();renderWeeklyPlan();renderBikeCoach();renderCharts();renderDailyHRVHistory();renderHistory();renderNutrition()}
-function exportData(){const payload={sessions:load(),athlete:loadAthlete(),hrvDaily:loadDailyHRV(),race:loadRace(),weightHistory:loadWeightHistory(),nutritionTargets:loadNutritionTargets(),nutritionMeals:loadNutritionMeals()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a"); a.href=URL.createObjectURL(blob);a.download="v10_clean_backup.json";a.click();URL.revokeObjectURL(a.href)}
+function exportData(){const payload={sessions:load(),athlete:loadAthlete(),hrvDaily:loadDailyHRV(),race:loadRace(),weightHistory:loadWeightHistory(),nutritionTargets:loadNutritionTargets(),nutritionMeals:loadNutritionMeals()}; const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),a=document.createElement("a"); a.href=URL.createObjectURL(blob);a.download="v11_04_backup_sport_nutrition.json";a.click();URL.revokeObjectURL(a.href)}
 function clearData(){if(confirm("Supprimer toutes les données locales ?")){localStorage.removeItem(KEY);localStorage.removeItem(HRV_KEY);localStorage.removeItem(RACE_KEY);localStorage.removeItem(WEIGHT_KEY);renderAll()}}
-document.getElementById("file")?.addEventListener("change",function(e){const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(){try{const p=JSON.parse(r.result),sessions=Array.isArray(p)?p:(p.sessions||p.data||p.seances||[]); if(!confirm("Remplacer les données actuelles ?"))return; saveData(sessions.map(normalizeSession).filter(Boolean)); if(p.athlete)saveAthleteData(p.athlete); if(Array.isArray(p.hrvDaily))saveDailyHRVData(p.hrvDaily); if(Array.isArray(p.weightHistory))saveWeightHistory(p.weightHistory); if(p.race)saveRaceData(p.race); if(p.nutritionTargets)saveNutritionTargetsData(p.nutritionTargets); if(Array.isArray(p.nutritionMeals))saveNutritionMeals(p.nutritionMeals); alert("Import réussi"); renderAll()}catch(err){alert("Erreur import JSON")} e.target.value=""}; r.readAsText(f)});
-window.openMealCamera=openMealCamera;window.openMealGallery=openMealGallery;window.clearMealPhoto=clearMealPhoto;window.analyzeMealPhoto=analyzeMealPhoto;window.addMealFoodRow=addMealFoodRow;window.clearMealRows=clearMealRows;window.saveMealFromRows=saveMealFromRows;window.saveNutritionTargets=saveNutritionTargets;window.autoNutritionTargets=autoNutritionTargets;
-window.saveAthlete=saveAthlete;window.editSession=editSession;window.deleteSession=deleteSession;window.addExo=addExo;window.saveSession=saveSession;window.exportData=exportData;window.clearData=clearData;window.saveDailyHRV=saveDailyHRV;window.deleteTodayHRV=deleteTodayHRV;window.toggleHRVHistory=toggleHRVHistory;window.toggleHistory=toggleHistory;window.toggleWeeklyPlan=toggleWeeklyPlan;window.saveRace=saveRace;window.deleteRace=deleteRace;window.renderAll=renderAll;
+document.getElementById("file")?.addEventListener("change",function(e){const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(){try{const p=JSON.parse(r.result),sessions=Array.isArray(p)?p:(p.sessions||p.data||p.seances||[]); if(!confirm("Remplacer les données actuelles ?"))return; saveData(sessions.map(normalizeSession).filter(Boolean)); if(p.athlete)saveAthleteData(p.athlete); if(Array.isArray(p.hrvDaily))saveDailyHRVData(p.hrvDaily); if(Array.isArray(p.weightHistory))saveWeightHistory(p.weightHistory); if(p.race)saveRaceData(p.race); alert("Import réussi"); renderAll()}catch(err){alert("Erreur import JSON")} e.target.value=""}; r.readAsText(f)});
+window.saveAthlete=saveAthlete;window.editSession=editSession;window.deleteSession=deleteSession;window.addExo=addExo;window.saveSession=saveSession;window.saveNutritionTargets=saveNutritionTargets;window.addFoodRow=addFoodRow;window.addFoodFromSearch=addFoodFromSearch;window.fillFoodFromDb=fillFoodFromDb;window.saveNutritionMeal=saveNutritionMeal;window.clearNutritionMealDraft=clearNutritionMealDraft;window.analyseMealPhotoDemo=analyseMealPhotoDemo;window.exportData=exportData;window.clearData=clearData;window.saveDailyHRV=saveDailyHRV;window.deleteTodayHRV=deleteTodayHRV;window.toggleHRVHistory=toggleHRVHistory;window.toggleHistory=toggleHistory;window.toggleWeeklyPlan=toggleWeeklyPlan;window.saveRace=saveRace;window.deleteRace=deleteRace;window.renderAll=renderAll;
 migrateLegacyData();setupForm();hydrateAthlete();renderAll();
 </script>
 </body>
