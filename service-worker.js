@@ -1,4 +1,4 @@
-const CACHE="suivi-training-v12-restore-history";
+const CACHE="suivi-training-v12-food-units";
 const APP_SHELL=["./","./index.html","./manifest.webmanifest","./icons/app-icon.svg","./data/ciqual-2025.min.json"];
 
 self.addEventListener("install",event=>{
