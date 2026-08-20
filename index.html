@@ -69,7 +69,16 @@ async function signIn(){try{await signInWithEmailAndPassword(auth,authEmail.valu
 async function logout(){try{await signOut(auth);authPassword.value=""}catch(e){alert(authMessage(e))}}
 async function saveCloudData(payload){const ref=userDoc(); if(!ref)return false; await runTransaction(db,async tx=>{const snap=await tx.get(ref),cloud=snap.exists()?snap.data():{},deleted=mergeDeleted(cloud.deletedSessionIds,payload.deletedSessionIds),sessions=mergeSessions(payload.sessions,cloud.sessions,deleted); tx.set(ref,{...payload,sessions,deletedSessionIds:deleted,updatedAt:Date.now(),schemaVersion:2},{merge:true});}); return true;}
 async function loadCloudData(){const ref=userDoc(); if(!ref){alert("Tu n'es pas connecté.");return null} const snap=await getDoc(ref); if(!snap.exists()) return null; return snap.data();}
-function extractBackupSessions(parsed){return Array.isArray(parsed)?parsed:["sessions","data","seances","séances","workouts","v90_data","v89_data","v891_data","v8_data"].map(key=>parsed?.[key]).find(Array.isArray)||[]}
+function extractBackupSessions(parsed){
+  if(Array.isArray(parsed))return parsed;
+  const direct=["sessions","data","seances","séances","workouts","v90_data","v89_data","v891_data","v8_data"].map(key=>parsed?.[key]).find(Array.isArray);
+  if(direct)return direct;
+  const raw=parsed?.rawLocalStorage&&typeof parsed.rawLocalStorage==="object"?parsed.rawLocalStorage:{};
+  for(const key of ["v90_data","v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"]){
+    try{const value=JSON.parse(raw[key]||"null");if(Array.isArray(value)&&value.length)return value}catch{}
+  }
+  return [];
+}
 function normalizeImportedSessions(sessions){const now=Date.now();return sessions.map((x,index)=>normalizeSession({...x,updatedAt:Number(x.updatedAt||now+index)})).filter(Boolean)}
 function clearDeletedForSessions(sessions){const ids=new Set(sessions.map(s=>String(s.id)));writeJson(STORAGE.deleted,readJson(STORAGE.deleted,[]).filter(x=>!ids.has(String(x.id))))}
 window.extractBackupSessions=extractBackupSessions;window.normalizeImportedSessions=normalizeImportedSessions;window.clearDeletedForSessions=clearDeletedForSessions;
