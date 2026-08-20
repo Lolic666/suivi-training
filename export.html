@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Export sécurité — Suivi Training</title>
+<style>
+:root{color-scheme:dark;--bg:#020617;--card:#0f172a;--text:#e2e8f0;--muted:#94a3b8;--green:#22c55e;--blue:#38bdf8;--border:#334155}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:18px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 50% -20%,#102744 0,var(--bg) 42%);color:var(--text)}
+main{max-width:720px;margin:0 auto}.card{background:rgba(15,23,42,.96);border:1px solid rgba(148,163,184,.18);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 14px 40px rgba(0,0,0,.18)}
+h1{margin:0 0 8px;font-size:28px}.small{color:var(--muted);line-height:1.5}button,a.button{display:block;width:100%;border:0;border-radius:14px;padding:14px;margin-top:12px;font-size:17px;font-weight:800;text-align:center;text-decoration:none;cursor:pointer}.primary{background:linear-gradient(135deg,#62df66,#35bd52);color:#031407}.secondary{background:#1e293b;color:#fff}.stat{padding:12px;border-radius:14px;background:#0b1c34;border:1px solid var(--border);white-space:pre-wrap;overflow:auto}.warn{color:#facc15}
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <h1>Export sécurité</h1>
+    <p class="small">Cette page lit uniquement les données stockées dans ton navigateur pour <strong>cette adresse GitHub Pages</strong>. Elle sert à récupérer ton historique quand l’app principale n’arrive pas à exporter.</p>
+    <button class="primary" onclick="exportEmergencyBackup()">Télécharger ma sauvegarde complète</button>
+    <a class="button secondary" href="./index.html">Retour à l’application</a>
+  </div>
+  <div class="card">
+    <h2>Diagnostic</h2>
+    <div id="diag" class="stat">Analyse du stockage local…</div>
+  </div>
+  <div class="card">
+    <p class="small warn">Garde le fichier JSON obtenu précieusement. Il peut contenir ton profil, ton historique sportif, tes repas et toutes les anciennes clés locales de l’app.</p>
+  </div>
+</main>
+<script>
+const KNOWN_KEYS={sessions:["v90_data","v891_data","v89_data","v88_data","v87_data","v86_data","v85_data","v84_data","v82_data","v81_data","v8_data"],athlete:["v90_athlete","v891_athlete","v89_athlete","v88_athlete","v87_athlete","v86_athlete","v85_athlete","v84_athlete","v82_athlete","v81_athlete","v8_athlete"],hrvDaily:["v90_hrv_daily","v891_hrv_daily","v89_hrv_daily","v88_hrv_daily","v87_hrv_daily","v86_hrv_daily"],weightHistory:["v90_weight_history"],race:["v90_race"],nutritionTargets:["v11_nutrition_targets"],nutritionMeals:["v11_nutrition_meals"],giCache:["v11_glycemic_index_cache"],foodFavorites:["v12_food_favorites"]};
+function safeParse(value,fallback=null){try{return JSON.parse(value)}catch{return fallback}}
+function rawLocalStorage(){const raw={};for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key)raw[key]=localStorage.getItem(key)}return raw}
+function firstParsed(keys,fallback){for(const key of keys){const raw=localStorage.getItem(key);if(raw!=null){const parsed=safeParse(raw,fallback);if(parsed!=null)return parsed}}return fallback}
+function buildPayload(){const raw=rawLocalStorage();return {exportedAt:new Date().toISOString(),sourceUrl:location.href,origin:location.origin,tool:"suivi-training-export-securite",sessions:firstParsed(KNOWN_KEYS.sessions,[]),athlete:firstParsed(KNOWN_KEYS.athlete,{}),hrvDaily:firstParsed(KNOWN_KEYS.hrvDaily,[]),weightHistory:firstParsed(KNOWN_KEYS.weightHistory,[]),race:firstParsed(KNOWN_KEYS.race,null),nutritionTargets:firstParsed(KNOWN_KEYS.nutritionTargets,{}),nutritionMeals:firstParsed(KNOWN_KEYS.nutritionMeals,[]),giCache:firstParsed(KNOWN_KEYS.giCache,{}),foodFavorites:firstParsed(KNOWN_KEYS.foodFavorites,[]),rawLocalStorage:raw};}
+function downloadJson(payload){const text=JSON.stringify(payload,null,2),blob=new Blob([text],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="suivi_training_export_securite_localstorage.json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},4000);return text.length}
+function exportEmergencyBackup(){const payload=buildPayload(),size=downloadJson(payload);alert("Export lancé : "+Object.keys(payload.rawLocalStorage||{}).length+" clé(s), "+Math.round(size/1024)+" Ko, "+(Array.isArray(payload.sessions)?payload.sessions.length:0)+" séance(s) détectée(s).")}
+function renderDiag(){const payload=buildPayload(),keys=Object.keys(payload.rawLocalStorage||{});document.getElementById("diag").textContent=["Adresse : "+location.origin,"Clés locales détectées : "+keys.length,"Séances détectées : "+(Array.isArray(payload.sessions)?payload.sessions.length:0),"HRV détectées : "+(Array.isArray(payload.hrvDaily)?payload.hrvDaily.length:0),"Poids détectés : "+(Array.isArray(payload.weightHistory)?payload.weightHistory.length:0),"Clés :",...keys.map(k=>"- "+k)].join("\n")}
+renderDiag();
+</script>
+</body>
+</html>
